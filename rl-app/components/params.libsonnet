@@ -15,5 +15,10 @@
       tfJobImage: "gcr.io/tf-on-k8s-dogfood/tf_operator:v20171223-37af20d",
       tfJobUiServiceType: "ClusterIP",
     },
+    "iap": {
+      name: "iap",
+      namespace: "rl",
+      secretName: "iap-ingress-ssl",
+    },
   },
 }
