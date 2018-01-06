@@ -1,0 +1,3 @@
+[submodule "google_kubeflow"]
+	path = google_kubeflow
+	url = git@github.com:google/kubeflow.git
