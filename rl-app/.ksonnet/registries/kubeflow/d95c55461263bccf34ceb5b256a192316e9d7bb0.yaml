@@ -1,0 +1,15 @@
+apiVersion: "0.1"
+gitVersion:
+  commitSha: d95c55461263bccf34ceb5b256a192316e9d7bb0
+  refSpec: azure_config
+kind: ksonnet.io/registry
+libraries:
+  core:
+    path: core
+    version: master
+  tf-job:
+    path: tf-job
+    version: master
+  tf-serving:
+    path: tf-serving
+    version: master
