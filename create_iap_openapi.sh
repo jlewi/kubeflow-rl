@@ -28,7 +28,8 @@ done
 echo BACKEND_ID=${BACKEND_ID}
 echo INGRESS_IP=${INGRESS_IP}
 
-ENDPOINT_URL="iap-tutorial.endpoints.${PROJECT}.cloud.goog"
+# We use the service name as the name for the service
+ENDPOINT_URL="${SERVICE}.endpoints.${PROJECT}.cloud.goog"
 echo ENDPOINT_URL=${ENDPOINT_URL}
 
 echo Writing openap spec to ${SERVICE}-openapi.yaml

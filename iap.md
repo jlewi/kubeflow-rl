@@ -31,11 +31,26 @@ cd rl-app
 ks apply gke -c iap
 ```
 
-Wait for the backend id for the ingress
+Create the OpenAPI spec to use with cloud endpoints
 
 ```
-./get_backend_id.sh kubeflow-rl rl iap-tutorial
-Waiting for backend id PROJECT=kubeflow-rl NAMESPACE=rl SERVICE=iap-tutorial...
-BACKEND_ID=9197620295647407514
+./create_iap_openapi.sh kubeflow-rl rl iap-tutorial iap-jupyter-load-balancer
 ```
 
+Create the service
+
+```
+gcloud --project=${PROJECT} endpoints services deploy iap-tutorial-openapi.yaml
+```
+
+Create oauth client credentials
+
+TODO(jlewi): Link to instructions when they are available
+
+Enable IAP
+
+```
+export CLIENT_ID=...
+export CLIENT_SECRET=...
+./enable_iap.sh kubeflow-rl rl iap-tutorial
+```
