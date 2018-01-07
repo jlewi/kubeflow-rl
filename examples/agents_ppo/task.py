@@ -168,6 +168,7 @@ def pybullet_ant():
   update_every = 30
   update_epochs = 25
   optimizer = tf.train.AdamOptimizer
+  optimizer_pre_initialize = True
   learning_rate = 1e-4
   # Losses
   discount = 0.995
@@ -272,17 +273,17 @@ def train(agents_config, env_processes=True, log_dir=None):
 
     # Attempt to work around not fetchable ops when running synchronous
     # training, was not effective.
-    # optimizer = agents_config.optimizer(agents_config.learning_rate)
-    #
-    # if FLAGS.sync_replicas:
-    #   optimizer = tf.train.SyncReplicasOptimizer(
-    #       optimizer,
-    #       replicas_to_aggregate=(
-    #           run_config.num_worker_replicas),
-    #       total_num_replicas=(run_config.num_worker_replicas)
-    #   )
-    # with agents_config.unlocked:
-    #   agents_config.optimizer = optimizer
+    optimizer = agents_config.optimizer(agents_config.learning_rate)
+
+    if FLAGS.sync_replicas:
+      optimizer = tf.train.SyncReplicasOptimizer(
+          optimizer,
+          replicas_to_aggregate=(
+              run_config.num_worker_replicas),
+          total_num_replicas=(run_config.num_worker_replicas)
+      )
+    with agents_config.unlocked:
+      agents_config.optimizer = optimizer
 
     graph = define_simulation_graph(
         batch_env, agents_config.algorithm, agents_config, global_step)
@@ -321,40 +322,6 @@ def train(agents_config, env_processes=True, log_dir=None):
         init_op=init_op,
         local_init_op=local_init_op
     )
-
-    # if FLAGS.sync_replicas:
-    #   opt = graph.algo._optimizer
-    #   local_init_op = opt.local_step_init_op
-    #   if run_config.is_chief:
-    #     local_init_op = opt.chief_init_op
-    #
-    #   ready_for_local_init_op = opt.ready_for_local_init_op
-    #
-    #   # Initial token and chief queue runners required by the sync_replicas mode
-    #   chief_queue_runner = opt.get_chief_queue_runner()
-    #   sync_init_op = opt.get_init_tokens_op()
-
-    # if FLAGS.sync_replicas:
-    #   sv = tf.train.Supervisor(
-    #       is_chief=run_config.is_chief,
-    #       logdir=log_dir,
-    #       init_op=init_op,
-    #       local_init_op=local_init_op,
-    #       ready_for_local_init_op=ready_for_local_init_op,
-    #       recovery_wait_secs=1,
-    #       global_step=global_step)
-    # else:
-    #   sv = tf.train.Supervisor(
-    #       is_chief=run_config.is_chief,
-    #       logdir=log_dir,
-    #       init_op=init_op,
-    #       recovery_wait_secs=1,
-    #       global_step=global_step)
-    # with sv.prepare_or_wait_for_session(server.target, config=sess_config) as sess:
-    # if FLAGS.sync_replicas and is_chief:
-    #   # Chief worker will start the chief queue runner and call the init op.
-    #   sess.run(sync_init_op)
-    #   sv.start_queue_runners(sess, [chief_queue_runner])
 
     with tf.train.MonitoredTrainingSession(
             master=server.target,
