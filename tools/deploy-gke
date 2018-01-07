@@ -38,5 +38,7 @@ PROJECT_ID=$(get_project_id)
 SALT=`date | shasum -a 256 | cut -c1-8`
 CHART=https://storage.googleapis.com/tf-on-k8s-dogfood-releases/latest/tf-job-operator-chart-latest.tgz
 
+cd $WORKSPACE/third_party/k8s
+
 python -m py.deploy setup --project ${PROJECT_ID} --cluster kubeflow-${SALT} \
   --zone us-east1-d --chart $CHART --junit_path /tmp/junit-info

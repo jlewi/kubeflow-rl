@@ -30,7 +30,7 @@ get_project_id() {
 }
 
 if [[ -z $(command -v jinja2) ]]; then
-  echo "The jinja2 command line utlity is required, installed via pip install jinja2"
+  echo "The jinja2 command line utlity is required, installed via pip install jinja2-cli"
   exit 1
 fi
 
@@ -46,7 +46,8 @@ IMAGE_TAG=gcr.io/${PROJECT_ID}/${IMAGE_BASE_NAME}:${VERSION_TAG}
 JOB_NAME=${IMAGE_BASE_NAME}-${SALT}
 LOG_DIR=gs://${PROJECT_ID}-k8s/jobs/run-${SALT}
 
-# So this is obviously not a great idea
+# TODO: So this is obviously not a great idea in a shared environment. Should
+# use namespaces.
 kubectl delete tfjobs --all && \
   kubectl delete service --selector='tensorflow.org=' && \
   kubectl delete jobs --selector='tensorflow.org=' && \

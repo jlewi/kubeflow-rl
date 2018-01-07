@@ -63,6 +63,82 @@ flags.DEFINE_string("debug_ui_type", "curses",
 FLAGS = flags.FLAGS
 
 
+# TODO: move to separate file if this works
+
+# TODO: Ensure backwards compatibility
+# In order to guarantee backwards compatibility can either define the shared
+# variable version of FFG as a separate function, as below, toggle between
+# worker_device and replica_device_setter(worker_device, ...) depending on
+# share_parameters.
+
+import collections
+import functools
+import operator
+
+NetworkOutput = collections.namedtuple(
+    'NetworkOutput', 'policy, mean, logstd, value, state')
+
+def feed_forward_gaussian_shared(
+        config, action_size, observations, unused_length, state=None,
+        share_parameters=True):
+  """Independent feed forward networks for policy and value.
+
+  The policy network outputs the mean action and the log standard deviation
+  is learned as independent parameter vector.
+
+  Args:
+    config: Configuration object.
+    action_size: Length of the action vector.
+    observations: Sequences of observations.
+    unused_length: Batch of sequence lengths.
+    state: Batch of initial recurrent states.
+
+  Returns:
+    NetworkOutput tuple.
+  """
+  run_config = tf.contrib.learn.RunConfig()
+
+  worker_device = "/job:%s/replica:0/task:%d/cpu:0" % (run_config.task_type,
+                                                       run_config.task_id)
+  device_setter = worker_device
+  if share_parameters:
+      device_setter = tf.train.replica_device_setter(
+          worker_device=worker_device,
+          cluster=run_config.cluster_spec)
+  with tf.device(device_setter):
+
+    mean_weights_initializer = tf.contrib.layers.variance_scaling_initializer(
+        factor=config.init_mean_factor)
+    logstd_initializer = tf.random_normal_initializer(
+        config.init_logstd, 1e-10)
+    flat_observations = tf.reshape(observations, [
+        tf.shape(observations)[0], tf.shape(observations)[1],
+        functools.reduce(operator.mul, observations.shape.as_list()[2:], 1)])
+    with tf.variable_scope('policy'):
+      x = flat_observations
+      for size in config.policy_layers:
+        x = tf.contrib.layers.fully_connected(x, size, tf.nn.relu)
+      mean = tf.contrib.layers.fully_connected(
+          x, action_size, tf.tanh,
+          weights_initializer=mean_weights_initializer)
+      logstd = tf.get_variable(
+          'logstd', mean.shape[2:], tf.float32, logstd_initializer)
+      logstd = tf.tile(
+          logstd[None, None],
+          [tf.shape(mean)[0], tf.shape(mean)[1]] + [1] * (mean.shape.ndims - 2))
+    with tf.variable_scope('value'):
+      x = flat_observations
+      for size in config.value_layers:
+        x = tf.contrib.layers.fully_connected(x, size, tf.nn.relu)
+      value = tf.contrib.layers.fully_connected(x, 1, None)[..., 0]
+    mean = tf.check_numerics(mean, 'mean')
+    logstd = tf.check_numerics(logstd, 'logstd')
+    value = tf.check_numerics(value, 'value')
+    policy = tf.contrib.distributions.MultivariateNormalDiag(
+        mean, tf.exp(logstd))
+  return NetworkOutput(policy, mean, logstd, value, state)
+
+
 def pybullet_ant():
   # General
   algorithm = agents.ppo.PPOAlgorithm
@@ -77,7 +153,7 @@ def pybullet_ant():
   steps = 1e7  # 10M
   # steps = 6000
   # Network
-  network = agents.scripts.networks.feed_forward_gaussian
+  network = feed_forward_gaussian_shared
   weight_summaries = dict(
       all=r'.*',
       policy=r'.*/policy/.*',
@@ -100,28 +176,6 @@ def pybullet_ant():
   kl_cutoff_coef = 1000
   kl_init_penalty = 1
   return locals()
-
-
-# def main(args):
-#   agents.scripts.utility.set_up_logging()
-#   log_dir = args.log_dir and os.path.expanduser(args.log_dir)
-#   if log_dir:
-#     log_dir = os.path.join(
-#         log_dir, '{}-{}'.format(args.run_base_tag, args.config))
-#   if args.mode == 'train':
-#     try:
-#       # Try to resume training.
-#       config = agents.scripts.utility.load_config(args.log_dir)
-#     except IOError:
-#       # Start new training run.
-#       config = agents.tools.AttrDict(globals()[args.config]())
-#       config = agents.scripts.utility.save_config(config, log_dir)
-#     for score in agents.scripts.train.train(config, env_processes=True):
-#       logging.info('Score {}.'.format(score))
-#   if args.mode == 'render':
-#     agents.scripts.visualize.visualize(
-#         logdir=args.log_dir, outdir=args.log_dir, num_agents=1, num_episodes=5,
-#         checkpoint=None, env_processes=True)
 
 
 def _get_agents_configuration(config_var_name, log_dir, is_chief=False):
