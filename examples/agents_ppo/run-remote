@@ -46,6 +46,13 @@ IMAGE_TAG=gcr.io/${PROJECT_ID}/${IMAGE_BASE_NAME}:${VERSION_TAG}
 JOB_NAME=${IMAGE_BASE_NAME}-${SALT}
 LOG_DIR=gs://${PROJECT_ID}-k8s/jobs/run-${SALT}
 
+# So this is obviously not a great idea
+kubectl delete tfjobs --all && \
+  kubectl delete service --selector='tensorflow.org=' && \
+  kubectl delete jobs --selector='tensorflow.org=' && \
+  kubectl delete pods --selector='tensorflow.org=' && \
+  kubectl delete deployments --selector='tensorflow.org='
+
 cd ${SCRIPT_DIR}
 docker build -t ${IMAGE_TAG} .
 gcloud docker -- push ${IMAGE_TAG}

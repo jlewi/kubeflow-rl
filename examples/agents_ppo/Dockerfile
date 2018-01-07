@@ -10,7 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM gcr.io/kubeflow-rl/kubeflow-rl-base:cpu-7c3ca833
+FROM gcr.io/kubeflow-rl/kubeflow-rl-base:cpu-e348dc1c
 
 ADD task.py /app/
 WORKDIR /app/

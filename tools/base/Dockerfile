@@ -12,10 +12,10 @@
 
 # For now use tensorflow cpu base image. In the future may want to use a base
 # that has vnc server configured.
-FROM tensorflow/tensorflow:1.5.0-rc0
+FROM tensorflow/tensorflow:1.3.0
 
-RUN pip install gym
-RUN pip install pybullet
+RUN pip install gym==0.9.4
+RUN pip install pybullet==1.7.5
 
 ADD third_party/agents /app/agents/
 
