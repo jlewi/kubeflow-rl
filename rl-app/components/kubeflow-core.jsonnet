@@ -14,7 +14,8 @@ local cloud = params.cloud;
 
 // TODO(jlewi): Make this a parameter
 local jupyterHubServiceType = params.jupyterHubServiceType;
-local jupyterHubImage = 'gcr.io/kubeflow/jupyterhub:1.0';
+// local jupyterHubImage = 'gcr.io/kubeflow/jupyterhub:1.0';
+local jupyterHubImage= 'gcr.io/kubeflow-rl/jupyterhub-k8s:1.0.1';
 local diskParam = params.disks;
 
 local diskNames = if diskParam != "null" && std.length(diskParam) > 0 then
