@@ -9,16 +9,19 @@
     "kubeflow-core": {
       cloud: "null",
       disks: "null",
+      jupyterHubEndpoint: "jupyterhub.endpoints.kubeflow-rl.cloud.goog",
+      jupyterHubServiceType: "ClusterIP",
+      jupyterHubServiceVersion: "2018-01-07r1",
       name: "kubeflow-core",
       namespace: "rl",
       tfDefaultImage: "null",
       tfJobImage: "gcr.io/tf-on-k8s-dogfood/tf_operator:v20171223-37af20d",
       tfJobUiServiceType: "ClusterIP",
     },
-    "iap": {
-      name: "iap",
+    "jupyter-iap": {
+      certsSecretName: "iap-ingress-ssl",      
+      name: "jupyter-iap",
       namespace: "rl",
-      secretName: "iap-ingress-ssl",
     },
   },
 }

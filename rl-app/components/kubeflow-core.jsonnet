@@ -13,6 +13,7 @@ local namespace = params.namespace;
 local cloud = params.cloud;
 
 // TODO(jlewi): Make this a parameter
+local jupyterHubServiceType = params.jupyterHubServiceType;
 local jupyterHubImage = 'gcr.io/kubeflow/jupyterhub:1.0';
 local diskParam = params.disks;
 
@@ -23,6 +24,19 @@ local diskNames = if diskParam != "null" && std.length(diskParam) > 0 then
 local jupyterConfigMap = if std.length(diskNames) == 0 then
 	jupyter.parts(namespace).jupyterHubConfigMap
 	else jupyter.parts(namespace).jupyterHubConfigMapWithVolumes(diskNames);
+
+local jupyterHubEndpointParam = params.jupyterHubEndpoint;
+local jupyterHubEndpoint = if jupyterHubEndpointParam == "null" then "" else jupyterHubEndpointParam;
+
+local jupyterHubServiceVersionParam = params.jupyterHubServiceVersion;
+local jupyterHubServiceVersion = if jupyterHubServiceVersionParam == "null" then "" else jupyterHubServiceVersionParam;
+
+local jupyterHubSideCars = []
+	+ if jupyterHubEndpoint != "" then	
+	[
+	  jupyter.parts(namespace).iapSideCar(jupyterHubEndpoint, jupyterHubServiceVersion),
+	]
+	else [];
 
 local tfJobImage = params.tfJobImage;
 local tfDefaultImage = params.tfDefaultImage;
@@ -49,9 +63,8 @@ local nfsComponents =
 std.prune(k.core.v1.list.new([
 	// jupyterHub components
 	jupyterConfigMap,
-    jupyter.parts(namespace).jupyterHubService, 
-    jupyter.parts(namespace).jupyterHubLoadBalancer,
-    jupyter.parts(namespace).jupyterHub(jupyterHubImage),
+    jupyter.parts(namespace).jupyterHubService(jupyterHubServiceType), 
+    jupyter.parts(namespace).jupyterHub(jupyterHubImage, jupyterHubSideCars),
     jupyter.parts(namespace).jupyterHubRole,
     jupyter.parts(namespace).jupyterHubServiceAccount,
     jupyter.parts(namespace).jupyterHubRoleBinding,    
