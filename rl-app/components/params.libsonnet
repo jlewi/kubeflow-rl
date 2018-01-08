@@ -11,7 +11,7 @@
       disks: "null",
       jupyterHubEndpoint: "jupyterhub.endpoints.kubeflow-rl.cloud.goog",
       jupyterHubServiceType: "ClusterIP",
-      jupyterHubServiceVersion: "2018-01-07r1",
+      jupyterHubServiceVersion: "2018-01-08r0",
       name: "kubeflow-core",
       namespace: "rl",
       tfDefaultImage: "null",
