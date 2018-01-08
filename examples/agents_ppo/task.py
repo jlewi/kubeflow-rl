@@ -26,7 +26,7 @@ import pybullet_envs  # To make AntBulletEnv-v0 available.
 flags = tf.app.flags
 
 flags.DEFINE_string("mode", "train",
-                    "Run mode, one of [train, visualize].")
+                    "Run mode, one of [train, render, train_and_render].")
 flags.DEFINE_string("log_dir", None,
                     "The base directory in which to write logs and "
                     "checkpoints.")
@@ -142,26 +142,26 @@ def feed_forward_gaussian_shared(
 def pybullet_ant():
   # General
   algorithm = agents.ppo.PPOAlgorithm
-  num_agents = 10
-  # num_agents = 1
+  # num_agents = 10
+  num_agents = 1
   eval_episodes = 25
   use_gpu = False
   # Environment
-  env = 'AntBulletEnv-v0'
-  max_length = 1000
-  # max_length = 100
-  steps = 1e7  # 10M
-  # steps = 6000
+  env = 'KukaBulletEnv-v0'
+  # max_length = 1000
+  max_length = 100
+  # steps = 1e7  # 10M
+  steps = 6000
   # Network
   network = feed_forward_gaussian_shared
   weight_summaries = dict(
       all=r'.*',
       policy=r'.*/policy/.*',
       value=r'.*/value/.*')
-  policy_layers = 200, 100
-  value_layers = 200, 100
-  # policy_layers = 20, 10
-  # value_layers = 20, 10
+  # policy_layers = 200, 100
+  # value_layers = 200, 100
+  policy_layers = 20, 10
+  value_layers = 20, 10
   init_mean_factor = 0.1
   init_logstd = -1
   # Optimization
@@ -402,18 +402,18 @@ def main(unused_argv):
     FLAGS.log_dir = os.path.join(
         log_dir, '{}-{}'.format(FLAGS.run_base_tag, FLAGS.config))
 
-  if FLAGS.mode == 'train':
-    # for score in agents.scripts.train.train(agents_config, env_processes=True):
-    #   logging.info('Score {}.'.format(score))
-    for score in train(agents_config):
-      tf.logging.info('Mean score: %s' % score)
-  elif FLAGS.mode == 'render':
+  if (FLAGS.mode == 'train' or FLAGS.mode == 'train_and_render'):
+    # for score in train(agents_config):
+    #   tf.logging.info('Mean score: %s' % score)
+    for score in agents.scripts.train.train(agents_config, env_processes=True):
+      logging.info('Score {}.'.format(score))
+  if (FLAGS.mode == 'render' or FLAGS.mode == 'train_and_render'):
     agents.scripts.visualize.visualize(
         logdir=log_dir, outdir=log_dir, num_agents=1, num_episodes=5,
         checkpoint=None, env_processes=True)
-  else:
+  if FLAGS.mode not in ['train', 'render', 'train_and_render']:
     raise ValueError('Unrecognized mode, please set the run mode with --mode '
-                     'to either train or render.')
+                     'to train, render, or train_and_render.')
 
 
 if __name__ == '__main__':

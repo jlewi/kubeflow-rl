@@ -37,8 +37,9 @@ upsearch () {
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WORKSPACE_ROOT=$(upsearch WORKSPACE)
+AGENT_LIB=${1:-baselines}
 
-IMAGE_BASE_NAME=kubeflow-rl-base
+IMAGE_BASE_NAME=kubeflow-rl-${AGENT_LIB}
 CPU_GPU=cpu
 
 PROJECT_ID=$(get_project_id)
@@ -48,6 +49,6 @@ IMAGE_TAG=gcr.io/${PROJECT_ID}/${IMAGE_BASE_NAME}:${VERSION_TAG}
 
 cd ${WORKSPACE_ROOT}
 
-docker build -t ${IMAGE_TAG} -f tools/base/Dockerfile .
+docker build -t ${IMAGE_TAG} -f tools/base/Dockerfile.${AGENT_LIB} .
 
 gcloud docker -- push ${IMAGE_TAG}

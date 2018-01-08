@@ -36,15 +36,15 @@ fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-IMAGE_BASE_NAME=agents-ppo
+IMAGE_BASE_NAME=baselines-ppo2
 EXAMPLE_PATH=${SCRIPT_DIR}
 
 PROJECT_ID=$(get_project_id)
 SALT=`date | shasum -a 256 | cut -c1-8`
 VERSION_TAG=cpu-${SALT}
-IMAGE_TAG=gcr.io/${PROJECT_ID}/${IMAGE_BASE_NAME}:${VERSION_TAG}
 JOB_NAME=${IMAGE_BASE_NAME}-${SALT}
 LOG_DIR=gs://${PROJECT_ID}-k8s/jobs/run-${SALT}
+IMAGE_TAG=gcr.io/kubeflow-rl/kubeflow-rl-baselines:cpu-b54052a2
 
 # TODO: So this is obviously not a great idea in a shared environment. Should
 # use namespaces.
@@ -54,30 +54,11 @@ kubectl delete tfjobs --all && \
   kubectl delete pods --selector='tensorflow.org=' && \
   kubectl delete deployments --selector='tensorflow.org='
 
-cd ${SCRIPT_DIR}
-docker build -t ${IMAGE_TAG} .
-gcloud docker -- push ${IMAGE_TAG}
-
-# jinja2 job.yaml.tmpl \
-#    -D image=${IMAGE_TAG} \
-#    -D job_name=${JOB_NAME} \
-#    -D log_dir=${LOG_DIR} \
-#    -D environment=pybullet_ant \
-#    -D mode=train | kubectl create -f -
-
-jinja2 job.yaml.tmpl \
-   -D image=${IMAGE_TAG} \
+jinja2 ${SCRIPT_DIR}/job.yaml.tmpl \
    -D job_name=${JOB_NAME} \
-   -D log_dir=${LOG_DIR} \
-   -D environment=pybullet_ant \
-   -D mode=train_and_render | kubectl create -f -
-
-# jinja2 job.yaml.tmpl \
-#    -D image=${IMAGE_TAG} \
-#    -D job_name=${JOB_NAME} \
-#    -D log_dir=${LOG_DIR} \
-#    -D environment=pybullet_ant \
-#    -D mode=render | kubectl create -f -
+   -D command=${COMMAND} \
+   -D image=${IMAGE_TAG} \
+   -D log_dir=${LOG_DIR} | kubectl create -f -
 
 echo "== container: ${AGENTS_CPU}"
 echo "== log dir: ${LOG_DIR}"

@@ -4,3 +4,6 @@
 [submodule "third_party/k8s"]
 	path = third_party/k8s
 	url = https://github.com/tensorflow/k8s.git
+[submodule "third_party/baselines"]
+	path = third_party/baselines
+	url = https://github.com/openai/baselines.git
