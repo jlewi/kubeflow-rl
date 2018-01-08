@@ -11,11 +11,11 @@
       disks: "null",
       jupyterHubEndpoint: "jupyterhub.endpoints.kubeflow-rl.cloud.goog",
       jupyterHubServiceType: "ClusterIP",
-      jupyterHubServiceVersion: "2018-01-08r0",
+      jupyterHubServiceVersion: "2018-01-08r2",
       name: "kubeflow-core",
       namespace: "rl",
       tfDefaultImage: "null",
-      tfJobImage: "gcr.io/tf-on-k8s-dogfood/tf_operator:v20171223-37af20d",
+      tfJobImage: "gcr.io/tf-on-k8s-dogfood/tf_operator:v20180108-190394d-dirty-e3b0c44",
       tfJobUiServiceType: "ClusterIP",
     },
     "jupyter-iap": {
