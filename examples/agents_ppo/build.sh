@@ -14,7 +14,6 @@
 # Note: Requires py/requirements.txt
 
 get_project_id() {
-  # From
   # Find the project ID first by DEVSHELL_PROJECT_ID (in Cloud Shell)
   # and then by querying the gcloud default project.
   local project="${DEVSHELL_PROJECT_ID:-}"

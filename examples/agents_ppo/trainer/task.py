@@ -66,16 +66,16 @@ FLAGS = flags.FLAGS
 def pybullet_kuka():
   # General
   algorithm = agents.ppo.PPOAlgorithm
-  # num_agents = 10
-  num_agents = 1
+  num_agents = 10
+  # num_agents = 1
   eval_episodes = 25
   use_gpu = False
   # Environment
   env = 'KukaBulletEnv-v0'
-  # max_length = 1000
-  max_length = 100
-  # steps = 1e7  # 10M
-  steps = 6000
+  max_length = 1000
+  # max_length = 100
+  steps = 5e7  # 10M
+  # steps = 6000
   # Network
   # network = feed_forward_gaussian_shared
   network = network = agents.scripts.networks.feed_forward_gaussian
@@ -83,10 +83,10 @@ def pybullet_kuka():
       all=r'.*',
       policy=r'.*/policy/.*',
       value=r'.*/value/.*')
-  # policy_layers = 200, 100
-  # value_layers = 200, 100
-  policy_layers = 20, 10
-  value_layers = 20, 10
+  policy_layers = 200, 100
+  value_layers = 200, 100
+  # policy_layers = 20, 10
+  # value_layers = 20, 10
   init_mean_factor = 0.1
   init_logstd = -1
   # Optimization

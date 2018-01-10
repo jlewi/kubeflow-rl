@@ -1,0 +1,30 @@
+---
+apiVersion: tensorflow.org/v1alpha1
+kind: TfJob
+metadata:
+  name: agents-ppo-1
+  namespace: rl
+spec:
+  replicaSpecs:
+  - replicas: 1
+    template:
+      spec:
+        containers:
+        - args:
+          - --logdir=gs://kubeflow-rl-k8s/jobs/49336d89
+          image: gcr.io/kubeflow-rl/agents-ppo:cpu-ef014365
+          name: tensorflow
+        restartPolicy: OnFailure
+    tfReplicaType: MASTER
+  - replicas: 1
+    template:
+      spec:
+        containers:
+        - args:
+          - --logdir=gs://kubeflow-rl-k8s/jobs/49336d89
+          image: gcr.io/kubeflow-rl/agents-ppo:cpu-ef014365
+          name: tensorflow
+        restartPolicy: OnFailure
+    tfReplicaType: WORKER
+  tensorBoard:
+    logDir: gs://kubeflow-rl-k8s/jobs/49336d89
