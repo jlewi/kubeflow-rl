@@ -21,3 +21,5 @@ docker run --workdir /app \
   --logdir ${LOG_DIR} --config pybullet_kuka \
   --mode render --run_base_tag render
 ```
+
+[![](render_preview.png)](render.mp4)
