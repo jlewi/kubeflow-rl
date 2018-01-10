@@ -60,48 +60,32 @@ flags.DEFINE_boolean("debug", True,
                      "Run in debug mode.")
 flags.DEFINE_string("debug_ui_type", "curses",
                     "Command-line user interface type (curses | readline)")
+
+# TODO: Consider making ksonnet the primary means of managing model
+# parameterization which would involve exposing all of the params currently
+# hard-coded below (in pybullet_kuka) as command-line args.
+# flags.DEFINE_boolean("network", 'feed_forward_gaussian',
+#                      "The registered network name to use for policy and value.")
+# flags.DEFINE_boolean("policy_layers", "200,100",
+#                      "A comma-separates list of the size of a series of layers "
+#                      "to comprise the policy network.")
+# flags.DEFINE_boolean("value_layers", "200,100",
+#                      "A comma-separates list of the size of a series of layers "
+#                      "to comprise the value network.")
+# flags.DEFINE_boolean("num_agents", 10,
+#                      "The number of agents to use.")
+# flags.DEFINE_boolean("steps", 1e7,
+#                      "The number of steps.")
+# flags.DEFINE_boolean("discount", 0.995,
+#                      "The discount.")
+# flags.DEFINE_boolean("kl_target", 1e-2,
+#                      "the KL target.")
+# flags.DEFINE_boolean("kl_cutoff_factor", 2,
+#                      "The KL cutoff factor.")
+# flags.DEFINE_boolean("kl_cutoff_coef", 1000,
+#                      "The KL cutoff coefficient.")
+
 FLAGS = flags.FLAGS
-
-
-def pybullet_kuka():
-  # General
-  algorithm = agents.ppo.PPOAlgorithm
-  num_agents = 10
-  # num_agents = 1
-  eval_episodes = 25
-  use_gpu = False
-  # Environment
-  env = 'KukaBulletEnv-v0'
-  max_length = 1000
-  # max_length = 100
-  steps = 5e7  # 10M
-  # steps = 6000
-  # Network
-  # network = feed_forward_gaussian_shared
-  network = network = agents.scripts.networks.feed_forward_gaussian
-  weight_summaries = dict(
-      all=r'.*',
-      policy=r'.*/policy/.*',
-      value=r'.*/value/.*')
-  policy_layers = 200, 100
-  value_layers = 200, 100
-  # policy_layers = 20, 10
-  # value_layers = 20, 10
-  init_mean_factor = 0.1
-  init_logstd = -1
-  # Optimization
-  update_every = 30
-  update_epochs = 25
-  optimizer = tf.train.AdamOptimizer
-  optimizer_pre_initialize = True
-  learning_rate = 1e-4
-  # Losses
-  discount = 0.995
-  kl_target = 1e-2
-  kl_cutoff_factor = 2
-  kl_cutoff_coef = 1000
-  kl_init_penalty = 1
-  return locals()
 
 
 def define_simulation_graph(batch_env, algo_cls, config, global_step):
@@ -150,8 +134,8 @@ def train(agents_config, env_processes=True, log_dir=None):
 
   FLAGS = tf.app.flags.FLAGS
 
-  if log_dir is None and hasattr(FLAGS, 'log_dir'):
-    log_dir = FLAGS.log_dir
+  if log_dir is None and hasattr(FLAGS, 'logdir'):
+    log_dir = FLAGS.logdir
 
   run_config = tf.contrib.learn.RunConfig()
 
@@ -289,18 +273,19 @@ def train(agents_config, env_processes=True, log_dir=None):
     batch_env.close()
 
 
-def _get_agents_configuration(config_var_name, log_dir, is_chief=False):
+def _get_agents_configuration(hparam_set_name, log_dir, is_chief=False):
   """Load hyperparameter config."""
   try:
     # Try to resume training.
-    config = agents.scripts.utility.load_config(log_dir)
+    hparams = agents.scripts.utility.load_config(log_dir)
   except IOError:
-    # Load hparams from object in globals() by name.
-    config = agents.tools.AttrDict(globals()[config_var_name]())
+    from . import hparams
+    registry = hparams.Registry()
+    hparams = registry.get_hparams(hparam_set_name)
     if is_chief:
       # Write the hyperparameters for this run to a config YAML for posteriority
-      config = agents.scripts.utility.save_config(config, log_dir)
-  return config
+      hparams = agents.scripts.utility.save_config(hparams, log_dir)
+  return hparams
 
 
 def main(unused_argv):
@@ -318,23 +303,18 @@ def main(unused_argv):
 
   run_config = tf.contrib.learn.RunConfig()
 
-  # log_dir = FLAGS.log_dir and os.path.expanduser(FLAGS.log_dir)
-  # logdir = FLAGS.logdir and os.path.expanduser(os.path.join(
-  #     FLAGS.logdir, '{}-{}'.format(FLAGS.timestamp, FLAGS.config)))
-  # if log_dir:
-  #   FLAGS.log_dir = os.path.join(
-  #       log_dir, '{}-{}'.format(FLAGS.run_base_tag, FLAGS.config))
+  FLAGS.logdir = os.path.join(
+    FLAGS.logdir, '{}-{}'.format(FLAGS.run_base_tag, FLAGS.config))
 
   agents_config = _get_agents_configuration(
       FLAGS.config, FLAGS.logdir, run_config.is_chief)
 
-  tf.logging.debug("=== using log dir: %s" % FLAGS.logdir)
-
   if (FLAGS.mode == 'train' or FLAGS.mode == 'train_and_render'):
     # for score in train(agents_config):
     #   tf.logging.info('Mean score: %s' % score)
-    for score in agents.scripts.train.train(agents_config, env_processes=True):
-      logging.info('Score {}.'.format(score))
+    if run_config.is_chief:
+      for score in agents.scripts.train.train(agents_config, env_processes=True):
+        logging.info('Score {}.'.format(score))
   if (FLAGS.mode == 'render' or FLAGS.mode == 'train_and_render'):
     agents.scripts.visualize.visualize(
         logdir=FLAGS.logdir, outdir=FLAGS.logdir, num_agents=1, num_episodes=5,

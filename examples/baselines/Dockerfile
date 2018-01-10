@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -11,12 +10,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-SALT=`date | shasum -a 256 | cut -c1-8`
-VERSION_TAG=cpu-${SALT}
-IMAGE_TAG=gcr.io/kubeflow-rl/kubeflow-rl-baselines:cpu-b54052a2
-LOG_DIR=/tmp/${SALT}
-COMMAND="python3 -m baselines.ppo2.run_atari"
+FROM gcr.io/kubeflow-rl/kubeflow-rl-baselines:cpu-b54052a2
 
-docker run --workdir /app \
-  -it ${IMAGE_TAG} \
-  $COMMAND
+ADD trainer /app/trainer/
+
+WORKDIR /app/
+
+ENTRYPOINT ["python3", "-m", "trainer.task"]

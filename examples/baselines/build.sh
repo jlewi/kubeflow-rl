@@ -14,7 +14,6 @@
 # Note: Requires py/requirements.txt
 
 get_project_id() {
-  # From
   # Find the project ID first by DEVSHELL_PROJECT_ID (in Cloud Shell)
   # and then by querying the gcloud default project.
   local project="${DEVSHELL_PROJECT_ID:-}"
@@ -36,37 +35,16 @@ fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-IMAGE_BASE_NAME=baselines-ppo2
+IMAGE_BASE_NAME=baselines
 EXAMPLE_PATH=${SCRIPT_DIR}
 
 PROJECT_ID=$(get_project_id)
 SALT=`date | shasum -a 256 | cut -c1-8`
 VERSION_TAG=cpu-${SALT}
+IMAGE_TAG=gcr.io/${PROJECT_ID}/${IMAGE_BASE_NAME}:${VERSION_TAG}
 JOB_NAME=${IMAGE_BASE_NAME}-${SALT}
 LOG_DIR=gs://${PROJECT_ID}-k8s/jobs/run-${SALT}
-IMAGE_TAG=gcr.io/kubeflow-rl/kubeflow-rl-baselines:cpu-b54052a2
 
-# TODO: So this is obviously not a great idea in a shared environment. Should
-# use namespaces.
-kubectl delete tfjobs --all && \
-  kubectl delete service --selector='tensorflow.org=' && \
-  kubectl delete jobs --selector='tensorflow.org=' && \
-  kubectl delete pods --selector='tensorflow.org=' && \
-  kubectl delete deployments --selector='tensorflow.org='
-
-jinja2 ${SCRIPT_DIR}/job.yaml.tmpl \
-   -D job_name=${JOB_NAME} \
-   -D command=${COMMAND} \
-   -D image=${IMAGE_TAG} \
-   -D log_dir=${LOG_DIR} | kubectl create -f -
-
-echo "== container: ${AGENTS_CPU}"
-echo "== log dir: ${LOG_DIR}"
-
-WORKER_POD=''
-while [[ -z ${WORKER_POD} ]]; do
-  kubectl get pods
-  WORKER_POD=$(kubectl get pods -l tensorflow.org=,job_type=MASTER,tf_job_name=${JOB_NAME} -o template --template '{{range .items}}{{.metadata.name}} {{.status.phase}}{{"\n"}}{{end}}' | grep Running | head -n1 | cut -f1 -d' ')
-done
-
-kubectl logs ${WORKER_POD} --follow
+cd ${SCRIPT_DIR}
+docker build -t ${IMAGE_TAG} .
+gcloud docker -- push ${IMAGE_TAG}

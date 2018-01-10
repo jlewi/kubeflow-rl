@@ -10,7 +10,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM gcr.io/kubeflow-rl/kubeflow-rl-agents:cpu-149e9f4f
+FROM gcr.io/kubeflow-rl/kubeflow-rl-agents:cpu-55d1a0ef
 
 ADD trainer /app/trainer/
 

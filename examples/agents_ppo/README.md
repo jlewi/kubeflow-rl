@@ -13,12 +13,13 @@ Renders can be run inside of the kubeflow-rl container, which has the necessary 
 
 ```bash
 
-LOG_DIR=/tmp/kubeflow-agents-render/7bafff5b
+LOG_DIR=/tmp/agents-logs/pybullet_kuka
+IMAGE=gcr.io/kubeflow-rl/agents-ppo:cpu-6795b581
 
 docker run --workdir /app \
   -v ${LOG_DIR}:${LOG_DIR} \
-  -it gcr.io/kubeflow-rl/agents-ppo:cpu-e50643ec \
-  --logdir ${LOG_DIR} --config pybullet_kuka \
+  -it $IMAGE \
+  --logdir ${LOG_DIR} --config pybullet_kuka_ff \
   --mode render --run_base_tag render
 ```
 
