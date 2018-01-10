@@ -47,11 +47,9 @@ paths:
           description: Put
         default:
           description: Error
-# security:
+security:
   # This causes ESP to reject requests without a valid JWT
-  # DO NOT SUBMIT need to uncomment to enable JWT validation. this commented out only for debugging issues
-  # with launching notebooks.
-  # - google_jwt: []
+  - google_jwt: []
 securityDefinitions:  
   google_jwt:
     authorizationUrl: ""
@@ -61,8 +59,8 @@ securityDefinitions:
     x-google-issuer: "https://cloud.google.com/iap"
     x-google-jwks_uri: "https://www.gstatic.com/iap/verify/public_key-jwk"
     # This must match the "aud" field in the JWT. You can add multiple audiences to accept JWTs from multiple clients.
-    x-google-audiences: "/projects/991277910492/global/backendServices/8245981003143579005"
+    x-google-audiences: "/projects/991277910492/global/backendServices/3114646075528978766"
 host: "jupyterhub.endpoints.kubeflow-rl.cloud.goog"
 x-google-endpoints:
 - name: "jupyterhub.endpoints.kubeflow-rl.cloud.goog"
-  target: "130.211.28.133"
+  target: "35.227.231.142"

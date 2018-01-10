@@ -22,6 +22,6 @@ local jupyterHubEspPort = 9000;
 
 std.prune(k.core.v1.list.new([
 	// jupyterHub components
-	iap.parts(namespace, partName).iapEspProxyService(jupyterHubSelector, jupyterHubEspPort),
+	iap.parts(namespace, partName).iapEspProxyService(jupyterHubSelector, jupyterHubEspPort),	
 	iap.parts(namespace, partName).ingress(certsSecretName),    
 ]))
