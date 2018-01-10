@@ -16,3 +16,4 @@ ENV=gke
 # Name of the core Kubeflow component
 CORE_NAME=kubeflow-core
 
+DOCS_PATH=~/git_kubeflow-rl/google_kubeflow/docs/gke/
