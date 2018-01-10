@@ -27,10 +27,10 @@ flags = tf.app.flags
 
 flags.DEFINE_string("mode", "train",
                     "Run mode, one of [train, render, train_and_render].")
-flags.DEFINE_string("log_dir", None,
+flags.DEFINE_string("logdir", None,
                     "The base directory in which to write logs and "
                     "checkpoints.")
-flags.DEFINE_string("config", None,
+flags.DEFINE_string("config", "pybullet_kuka",
                     "The name of the config object to be used to parameterize "
                     "the run.")
 flags.DEFINE_string("run_base_tag",
@@ -63,83 +63,7 @@ flags.DEFINE_string("debug_ui_type", "curses",
 FLAGS = flags.FLAGS
 
 
-# TODO: move to separate file if this works
-
-# TODO: Ensure backwards compatibility
-# In order to guarantee backwards compatibility can either define the shared
-# variable version of FFG as a separate function, as below, toggle between
-# worker_device and replica_device_setter(worker_device, ...) depending on
-# share_parameters.
-
-import collections
-import functools
-import operator
-
-NetworkOutput = collections.namedtuple(
-    'NetworkOutput', 'policy, mean, logstd, value, state')
-
-def feed_forward_gaussian_shared(
-        config, action_size, observations, unused_length, state=None,
-        share_parameters=True):
-  """Independent feed forward networks for policy and value.
-
-  The policy network outputs the mean action and the log standard deviation
-  is learned as independent parameter vector.
-
-  Args:
-    config: Configuration object.
-    action_size: Length of the action vector.
-    observations: Sequences of observations.
-    unused_length: Batch of sequence lengths.
-    state: Batch of initial recurrent states.
-
-  Returns:
-    NetworkOutput tuple.
-  """
-  run_config = tf.contrib.learn.RunConfig()
-
-  worker_device = "/job:%s/replica:0/task:%d/cpu:0" % (run_config.task_type,
-                                                       run_config.task_id)
-  device_setter = worker_device
-  if share_parameters:
-      device_setter = tf.train.replica_device_setter(
-          worker_device=worker_device,
-          cluster=run_config.cluster_spec)
-  with tf.device(device_setter):
-
-    mean_weights_initializer = tf.contrib.layers.variance_scaling_initializer(
-        factor=config.init_mean_factor)
-    logstd_initializer = tf.random_normal_initializer(
-        config.init_logstd, 1e-10)
-    flat_observations = tf.reshape(observations, [
-        tf.shape(observations)[0], tf.shape(observations)[1],
-        functools.reduce(operator.mul, observations.shape.as_list()[2:], 1)])
-    with tf.variable_scope('policy'):
-      x = flat_observations
-      for size in config.policy_layers:
-        x = tf.contrib.layers.fully_connected(x, size, tf.nn.relu)
-      mean = tf.contrib.layers.fully_connected(
-          x, action_size, tf.tanh,
-          weights_initializer=mean_weights_initializer)
-      logstd = tf.get_variable(
-          'logstd', mean.shape[2:], tf.float32, logstd_initializer)
-      logstd = tf.tile(
-          logstd[None, None],
-          [tf.shape(mean)[0], tf.shape(mean)[1]] + [1] * (mean.shape.ndims - 2))
-    with tf.variable_scope('value'):
-      x = flat_observations
-      for size in config.value_layers:
-        x = tf.contrib.layers.fully_connected(x, size, tf.nn.relu)
-      value = tf.contrib.layers.fully_connected(x, 1, None)[..., 0]
-    mean = tf.check_numerics(mean, 'mean')
-    logstd = tf.check_numerics(logstd, 'logstd')
-    value = tf.check_numerics(value, 'value')
-    policy = tf.contrib.distributions.MultivariateNormalDiag(
-        mean, tf.exp(logstd))
-  return NetworkOutput(policy, mean, logstd, value, state)
-
-
-def pybullet_ant():
+def pybullet_kuka():
   # General
   algorithm = agents.ppo.PPOAlgorithm
   # num_agents = 10
@@ -153,7 +77,8 @@ def pybullet_ant():
   # steps = 1e7  # 10M
   steps = 6000
   # Network
-  network = feed_forward_gaussian_shared
+  # network = feed_forward_gaussian_shared
+  network = network = agents.scripts.networks.feed_forward_gaussian
   weight_summaries = dict(
       all=r'.*',
       policy=r'.*/policy/.*',
@@ -177,20 +102,6 @@ def pybullet_ant():
   kl_cutoff_coef = 1000
   kl_init_penalty = 1
   return locals()
-
-
-def _get_agents_configuration(config_var_name, log_dir, is_chief=False):
-  """Load hyperparameter config."""
-  try:
-    # Try to resume training.
-    config = agents.scripts.utility.load_config(log_dir)
-  except IOError:
-    # Load hparams from object in globals() by name.
-    config = agents.tools.AttrDict(globals()[config_var_name]())
-    if is_chief:
-      # Write the hyperparameters for this run to a config YAML for posteriority
-      config = agents.scripts.utility.save_config(config, log_dir)
-  return config
 
 
 def define_simulation_graph(batch_env, algo_cls, config, global_step):
@@ -378,6 +289,20 @@ def train(agents_config, env_processes=True, log_dir=None):
     batch_env.close()
 
 
+def _get_agents_configuration(config_var_name, log_dir, is_chief=False):
+  """Load hyperparameter config."""
+  try:
+    # Try to resume training.
+    config = agents.scripts.utility.load_config(log_dir)
+  except IOError:
+    # Load hparams from object in globals() by name.
+    config = agents.tools.AttrDict(globals()[config_var_name]())
+    if is_chief:
+      # Write the hyperparameters for this run to a config YAML for posteriority
+      config = agents.scripts.utility.save_config(config, log_dir)
+  return config
+
+
 def main(unused_argv):
   """Run training.
 
@@ -393,14 +318,17 @@ def main(unused_argv):
 
   run_config = tf.contrib.learn.RunConfig()
 
+  # log_dir = FLAGS.log_dir and os.path.expanduser(FLAGS.log_dir)
+  # logdir = FLAGS.logdir and os.path.expanduser(os.path.join(
+  #     FLAGS.logdir, '{}-{}'.format(FLAGS.timestamp, FLAGS.config)))
+  # if log_dir:
+  #   FLAGS.log_dir = os.path.join(
+  #       log_dir, '{}-{}'.format(FLAGS.run_base_tag, FLAGS.config))
+
   agents_config = _get_agents_configuration(
-      FLAGS.config, FLAGS.log_dir, run_config.is_chief)
+      FLAGS.config, FLAGS.logdir, run_config.is_chief)
 
-  log_dir = FLAGS.log_dir and os.path.expanduser(FLAGS.log_dir)
-
-  if log_dir:
-    FLAGS.log_dir = os.path.join(
-        log_dir, '{}-{}'.format(FLAGS.run_base_tag, FLAGS.config))
+  tf.logging.debug("=== using log dir: %s" % FLAGS.logdir)
 
   if (FLAGS.mode == 'train' or FLAGS.mode == 'train_and_render'):
     # for score in train(agents_config):
@@ -409,7 +337,7 @@ def main(unused_argv):
       logging.info('Score {}.'.format(score))
   if (FLAGS.mode == 'render' or FLAGS.mode == 'train_and_render'):
     agents.scripts.visualize.visualize(
-        logdir=log_dir, outdir=log_dir, num_agents=1, num_episodes=5,
+        logdir=FLAGS.logdir, outdir=FLAGS.logdir, num_agents=1, num_episodes=5,
         checkpoint=None, env_processes=True)
   if FLAGS.mode not in ['train', 'render', 'train_and_render']:
     raise ValueError('Unrecognized mode, please set the run mode with --mode '

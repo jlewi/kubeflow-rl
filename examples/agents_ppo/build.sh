@@ -46,46 +46,6 @@ IMAGE_TAG=gcr.io/${PROJECT_ID}/${IMAGE_BASE_NAME}:${VERSION_TAG}
 JOB_NAME=${IMAGE_BASE_NAME}-${SALT}
 LOG_DIR=gs://${PROJECT_ID}-k8s/jobs/run-${SALT}
 
-# TODO: So this is obviously not a great idea in a shared environment. Should
-# use namespaces.
-kubectl delete tfjobs --all && \
-  kubectl delete service --selector='tensorflow.org=' && \
-  kubectl delete jobs --selector='tensorflow.org=' && \
-  kubectl delete pods --selector='tensorflow.org=' && \
-  kubectl delete deployments --selector='tensorflow.org='
-
 cd ${SCRIPT_DIR}
 docker build -t ${IMAGE_TAG} .
 gcloud docker -- push ${IMAGE_TAG}
-
-# jinja2 job.yaml.tmpl \
-#    -D image=${IMAGE_TAG} \
-#    -D job_name=${JOB_NAME} \
-#    -D log_dir=${LOG_DIR} \
-#    -D environment=pybullet_ant \
-#    -D mode=train | kubectl create -f -
-
-jinja2 job.yaml.tmpl \
-   -D image=${IMAGE_TAG} \
-   -D job_name=${JOB_NAME} \
-   -D log_dir=${LOG_DIR} \
-   -D environment=pybullet_ant \
-   -D mode=train_and_render | kubectl create -f -
-
-# jinja2 job.yaml.tmpl \
-#    -D image=${IMAGE_TAG} \
-#    -D job_name=${JOB_NAME} \
-#    -D log_dir=${LOG_DIR} \
-#    -D environment=pybullet_ant \
-#    -D mode=render | kubectl create -f -
-
-echo "== container: ${AGENTS_CPU}"
-echo "== log dir: ${LOG_DIR}"
-
-WORKER_POD=''
-while [[ -z ${WORKER_POD} ]]; do
-  kubectl get pods
-  WORKER_POD=$(kubectl get pods -l tensorflow.org=,job_type=MASTER,tf_job_name=${JOB_NAME} -o template --template '{{range .items}}{{.metadata.name}} {{.status.phase}}{{"\n"}}{{end}}' | grep Running | head -n1 | cut -f1 -d' ')
-done
-
-kubectl logs ${WORKER_POD} --follow
