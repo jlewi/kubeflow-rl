@@ -13,14 +13,37 @@ Renders can be run inside of the kubeflow-rl container, which has the necessary 
 
 ```bash
 
-LOG_DIR=/tmp/agents-logs/pybullet_kuka
-IMAGE=gcr.io/kubeflow-rl/agents-ppo:cpu-6795b581
-
+IMAGE=gcr.io/kubeflow-rl/agents-ppo:cpu-c27de982
+LOG_DIR=/tmp/agents-logs/jobs/v4/20180111T201120-pybullet_ant_ff
 docker run --workdir /app \
   -v ${LOG_DIR}:${LOG_DIR} \
-  -it $IMAGE \
-  --logdir ${LOG_DIR} --config pybullet_kuka_ff \
-  --mode render --run_base_tag render
+  -it $IMAGE --mode render \
+  --logdir ${LOG_DIR} --config pybullet_ant_ff
+
+IMAGE=gcr.io/kubeflow-rl/agents-ppo:cpu-7f092218
+LOG_DIR=/tmp/agents-logs/20180110T173924-pybullet_kuka
+docker run --workdir /app \
+  -v ${LOG_DIR}:${LOG_DIR} \
+  -it $IMAGE --mode render \
+  --logdir ${LOG_DIR} --config pybullet_kuka_ff
+
 ```
 
 [![](render_preview.png)](render.mp4)
+
+LOG_DIR=/tmp/agents-logs/jobs/v4/20180111T201120-pybullet_ant_ff
+
+LOG_DIR=/tmp/agents-logs/jobs/v5/jobs/20180112T052347-pybullet_ant_ff
+IMAGE=gcr.io/kubeflow-rl/agents-ppo:cpu-c27de982
+docker run --workdir /app \
+--entrypoint /usr/bin/env \
+  -v ${LOG_DIR}:${LOG_DIR} \
+  -it $IMAGE python ${LOG_DIR}/visualize.py --logdir ${LOG_DIR} --outdir ${LOG_DIR}/out4
+
+
+IMAGE=gcr.io/kubeflow-rl/agents-ppo:cpu-c27de982
+LOG_DIR=/tmp/agents-logs/jobs/v4/20180111T201120-pybullet_ant_ff
+docker run --workdir /app \
+--entrypoint /usr/bin/env \
+  -v ${LOG_DIR}:${LOG_DIR} \
+  -it $IMAGE python -m agents.scripts.visualize --logdir ${LOG_DIR} --outdir ${LOG_DIR}/out2

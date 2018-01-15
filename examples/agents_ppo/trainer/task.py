@@ -303,11 +303,13 @@ def main(unused_argv):
 
   run_config = tf.contrib.learn.RunConfig()
 
-  FLAGS.logdir = os.path.join(
-    FLAGS.logdir, '{}-{}'.format(FLAGS.run_base_tag, FLAGS.config))
+  log_dir = FLAGS.logdir
+
+  # log_dir = os.path.join(
+  #   log_dir, '{}-{}'.format(FLAGS.run_base_tag, FLAGS.config))
 
   agents_config = _get_agents_configuration(
-      FLAGS.config, FLAGS.logdir, run_config.is_chief)
+      FLAGS.config, log_dir, run_config.is_chief)
 
   if (FLAGS.mode == 'train' or FLAGS.mode == 'train_and_render'):
     # for score in train(agents_config):
@@ -317,7 +319,7 @@ def main(unused_argv):
         logging.info('Score {}.'.format(score))
   if (FLAGS.mode == 'render' or FLAGS.mode == 'train_and_render'):
     agents.scripts.visualize.visualize(
-        logdir=FLAGS.logdir, outdir=FLAGS.logdir, num_agents=1, num_episodes=5,
+        logdir=FLAGS.logdir, outdir=log_dir, num_agents=1, num_episodes=1,
         checkpoint=None, env_processes=True)
   if FLAGS.mode not in ['train', 'render', 'train_and_render']:
     raise ValueError('Unrecognized mode, please set the run mode with --mode '

@@ -10,10 +10,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM gcr.io/kubeflow-rl/base-baselines:cpu-bda7665e
+# For now use tensorflow cpu base image. In the future may want to use a base
+# that has vnc server configured.
+FROM tensorflow/tensorflow:1.5.0-rc0
 
-ADD trainer /app/trainer/
+ADD third_party/tensor2tensor /app/tensor2tensor/
+RUN cd /app/tensor2tensor && pip install -e .
 
-WORKDIR /app/
+WORKDIR /app
 
-ENTRYPOINT ["python3", "-m", "trainer.task"]
+ENTRYPOINT ["t2t-trainer"]

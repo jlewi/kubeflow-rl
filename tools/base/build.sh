@@ -39,7 +39,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WORKSPACE_ROOT=$(upsearch WORKSPACE)
 AGENT_LIB=${1:-agents}
 
-IMAGE_BASE_NAME=kubeflow-rl-${AGENT_LIB}
+IMAGE_BASE_NAME=base-${AGENT_LIB}
 CPU_GPU=cpu
 
 PROJECT_ID=$(get_project_id)
