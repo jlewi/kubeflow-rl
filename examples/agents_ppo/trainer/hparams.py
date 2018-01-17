@@ -36,8 +36,8 @@ def pybullet_kuka_ff():
 
   # Environment
   env = 'KukaBulletEnv-v0'
-  max_length = 1000
-  steps = 4e7
+  max_length = 2000
+  steps = 2e7
 
   # Network
   network = agents.scripts.networks.feed_forward_gaussian
@@ -77,8 +77,8 @@ def pybullet_ant_ff():
 
   # Environment
   env = 'AntBulletEnv-v0'
-  max_length = 1000
-  steps = 4e7  # 10M
+  max_length = 2000
+  steps = 2e7  # 10M
 
   # Network
   network = agents.scripts.networks.feed_forward_gaussian
@@ -117,8 +117,8 @@ def pybullet_cheetah_ff():
 
   # Environment
   env = 'HalfCheetahBulletEnv-v0'
-  max_length = 1000
-  steps = 4e7  # 10M
+  max_length = 2000
+  steps = 2e7  # 10M
 
   # Network
   network = agents.scripts.networks.feed_forward_gaussian
@@ -157,8 +157,8 @@ def pybullet_pendulum_ff():
 
   # Environment
   env = 'InvertedPendulumBulletEnv-v0'
-  max_length = 1000
-  steps = 4e7  # 10M
+  max_length = 2000
+  steps = 2e7  # 10M
 
   # Network
   network = agents.scripts.networks.feed_forward_gaussian

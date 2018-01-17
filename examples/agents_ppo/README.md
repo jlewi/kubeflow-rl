@@ -33,17 +33,30 @@ docker run --workdir /app \
 
 LOG_DIR=/tmp/agents-logs/jobs/v4/20180111T201120-pybullet_ant_ff
 
-LOG_DIR=/tmp/agents-logs/jobs/v5/jobs/20180112T052347-pybullet_ant_ff
-IMAGE=gcr.io/kubeflow-rl/agents-ppo:cpu-c27de982
+LOG_DIR=/tmp/agents-logs/jobs/v5/v6/741c1233-pybullet_kuka_ff
+IMAGE=gcr.io/kubeflow-rl/agents-ppo:cpu-cae5b3af
 docker run --workdir /app \
 --entrypoint /usr/bin/env \
   -v ${LOG_DIR}:${LOG_DIR} \
-  -it $IMAGE python ${LOG_DIR}/visualize.py --logdir ${LOG_DIR} --outdir ${LOG_DIR}/out4
+  -it $IMAGE python ${LOG_DIR}/visualize.py --logdir ${LOG_DIR} --outdir ${LOG_DIR}/render
 
-
-IMAGE=gcr.io/kubeflow-rl/agents-ppo:cpu-c27de982
-LOG_DIR=/tmp/agents-logs/jobs/v4/20180111T201120-pybullet_ant_ff
+LOG_DIR=/tmp/agents-logs/jobs/v5/v6/741c1233-pybullet_pendulum_ff
+IMAGE=gcr.io/kubeflow-rl/agents-ppo:cpu-cae5b3af
 docker run --workdir /app \
 --entrypoint /usr/bin/env \
   -v ${LOG_DIR}:${LOG_DIR} \
-  -it $IMAGE python -m agents.scripts.visualize --logdir ${LOG_DIR} --outdir ${LOG_DIR}/out2
+  -it $IMAGE python ${LOG_DIR}/visualize.py --logdir ${LOG_DIR} --outdir ${LOG_DIR}/render
+
+LOG_DIR=/tmp/agents-logs/jobs/v5/v6/20180112T052347-pybullet_ant_ff
+IMAGE=gcr.io/kubeflow-rl/agents-ppo:cpu-cae5b3af
+docker run --workdir /app \
+--entrypoint /usr/bin/env \
+  -v ${LOG_DIR}:${LOG_DIR} \
+  -it $IMAGE python ${LOG_DIR}/visualize.py --logdir ${LOG_DIR} --outdir ${LOG_DIR}/render
+
+LOG_DIR=/tmp/agents-logs/jobs/v5/v6/741c1233-pybullet_cheetah_ff
+IMAGE=gcr.io/kubeflow-rl/agents-ppo:cpu-cae5b3af
+docker run --workdir /app \
+--entrypoint /usr/bin/env \
+  -v ${LOG_DIR}:${LOG_DIR} \
+  -it $IMAGE python ${LOG_DIR}/visualize.py --logdir ${LOG_DIR} --outdir ${LOG_DIR}/render
