@@ -8,14 +8,15 @@
     // Each object below should correspond to a component in the components/ directory
     "kubeflow-core": {
       cloud: "null",
-      disks: "null",
+      disks: "",
+      jupyterHubAuthenticator: "iap",
       jupyterHubEndpoint: "jupyterhub.endpoints.kubeflow-rl.cloud.goog",
       jupyterHubServiceType: "ClusterIP",
       jupyterHubServiceVersion: "2018-01-10r4",
       name: "kubeflow-core",
       namespace: "rl",
       tfDefaultImage: "null",
-      tfJobImage: "gcr.io/tf-on-k8s-dogfood/tf_operator:v20180108-190394d-dirty-e3b0c44",
+      tfJobImage: "gcr.io/tf-on-k8s-dogfood/tf_operator:v20180111-adc8ab9-dirty-e3b0c44",
       tfJobUiServiceType: "ClusterIP",
     },
     "jupyter-iap": {

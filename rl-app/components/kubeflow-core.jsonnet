@@ -16,15 +16,13 @@ local cloud = params.cloud;
 local jupyterHubServiceType = params.jupyterHubServiceType;
 // local jupyterHubImage = 'gcr.io/kubeflow/jupyterhub:1.0';
 local jupyterHubImage= 'gcr.io/kubeflow-rl/jupyterhub-k8s:1.0.1';
+local jupyterHubAuthenticator = params.jupyterHubAuthenticator;
+
 local diskParam = params.disks;
 
 local diskNames = if diskParam != "null" && std.length(diskParam) > 0 then
   std.split(diskParam, ',')
   else [];
-
-local jupyterConfigMap = if std.length(diskNames) == 0 then
-	jupyter.parts(namespace).jupyterHubConfigMap
-	else jupyter.parts(namespace).jupyterHubConfigMapWithVolumes(diskNames);
 
 local jupyterHubEndpointParam = params.jupyterHubEndpoint;
 local jupyterHubEndpoint = if jupyterHubEndpointParam == "null" then "" else jupyterHubEndpointParam;
@@ -61,9 +59,10 @@ local nfsComponents =
 	else 
 	[];
 
+local kubeSpawner = jupyter.parts(namespace).kubeSpawner(jupyterHubAuthenticator, diskNames);
 std.prune(k.core.v1.list.new([
 	// jupyterHub components
-	jupyterConfigMap,
+	jupyter.parts(namespace).jupyterHubConfigMap(kubeSpawner),
     jupyter.parts(namespace).jupyterHubService, 
     jupyter.parts(namespace).jupyterHubLoadBalancer(jupyterHubServiceType), 
     jupyter.parts(namespace).jupyterHub(jupyterHubImage, jupyterHubSideCars),
