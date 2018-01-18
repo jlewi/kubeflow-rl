@@ -1,0 +1,30 @@
+apiVersion: "tensorflow.org/v1alpha1"
+kind: "TfJob"
+metadata:
+  name: "baselines-ppo-demo-atari"
+  namespace: default
+spec:
+  replicaSpecs:
+    - replicas: 1
+      tfReplicaType: MASTER
+      template:
+        spec:
+          containers:
+            - image: gcr.io/kubeflow-rl/kubeflow-rl-baselines:cpu-b54052a2
+              name: tensorflow
+              command: ["python3", "-m", "baselines.ppo2.run_atari"]
+          restartPolicy: OnFailure
+    - replicas: 3
+      tfReplicaType: WORKER
+      template:
+        spec:
+          containers:
+            - image: gcr.io/kubeflow-rl/kubeflow-rl-baselines:cpu-b54052a2
+              name: tensorflow
+              command: ["python3", "-m", "baselines.ppo2.run_atari"]
+          restartPolicy: OnFailure
+    - replicas: 2
+      tfReplicaType: PS
+  tensorBoard:
+    logDir: gs://kubeflow-rl/jobs/baselines-ppo-demo-atari
+  tfImage: tensorflow/tensorflow:1.3.0

@@ -11,8 +11,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Note: Requires py/requirements.txt
+
 get_project_id() {
-  # From
   # Find the project ID first by DEVSHELL_PROJECT_ID (in Cloud Shell)
   # and then by querying the gcloud default project.
   local project="${DEVSHELL_PROJECT_ID:-}"
@@ -27,6 +28,11 @@ get_project_id() {
   echo "$project"
 }
 
+if [[ -z $(command -v jinja2) ]]; then
+  echo "The jinja2 command line utlity is required, installed via pip install jinja2-cli"
+  exit 1
+fi
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 IMAGE_BASE_NAME=agents-ppo
@@ -37,18 +43,8 @@ SALT=`date | shasum -a 256 | cut -c1-8`
 VERSION_TAG=cpu-${SALT}
 IMAGE_TAG=gcr.io/${PROJECT_ID}/${IMAGE_BASE_NAME}:${VERSION_TAG}
 JOB_NAME=${IMAGE_BASE_NAME}-${SALT}
-
-LOG_DIR=/tmp/${SALT}
+LOG_DIR=gs://${PROJECT_ID}-k8s/jobs/run-${SALT}
 
 cd ${SCRIPT_DIR}
-
 docker build -t ${IMAGE_TAG} .
-
-#COMMAND="python task.py --log_dir ${LOG_DIR} --config pybullet_ant --mode train --run_base_tag ${JOB_NAME}"
-COMMAND="--log_dir ${LOG_DIR} --config pybullet_ant --mode train --run_base_tag ${JOB_NAME}"
-
-docker run --workdir /app \
-  -e TF_CONFIG='{"cluster":{"master":["tfagents-2aa096f5-master-9iy7-0:2222"]},"task":{"type":"master","index":0},"environment":"cloud"}' \
-  -v ${EXAMPLE_PATH}:/app/trainer \
-  -it ${IMAGE_TAG} \
-  $COMMAND
+gcloud docker -- push ${IMAGE_TAG}

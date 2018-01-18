@@ -7,3 +7,12 @@
 [submodule "third_party/k8s"]
 	path = third_party/k8s
 	url = https://github.com/tensorflow/k8s.git
+[submodule "third_party/baselines"]
+	path = third_party/baselines
+	url = https://github.com/openai/baselines.git
+[submodule "third_party/tensor2tensor"]
+	path = third_party/tensor2tensor
+	url = https://github.com/tensorflow/tensor2tensor.git
+[submodule "third_party/kubeflow"]
+	path = third_party/kubeflow
+	url = https://github.com/google/kubeflow.git

@@ -10,9 +10,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM gcr.io/kubeflow-rl/kubeflow-rl-base:cpu-44194150
+# For now use tensorflow cpu base image. In the future may want to use a base
+# that has vnc server configured.
+FROM tensorflow/tensorflow:1.3.0-py3
 
-ADD task.py /app/
-WORKDIR /app/
+RUN apt-get update
+RUN apt-get install -y zlib1g-dev cmake libopenmpi-dev
+RUN apt-get install -y python3-pip
 
-ENTRYPOINT ["python", "task.py"]
+RUN pip3 install gym[mujoco,atari,classic_control] \
+  scipy tqdm joblib zmq dill azure==1.0.3 progressbar2 \
+  mpi4py
+
+RUN apt-get install -y libgtk2.0-dev
+RUN pip3 install opencv-python
+
+ADD third_party/baselines /app/baselines/
+RUN cd /app/baselines && pip3 install -e .
+
+WORKDIR /app

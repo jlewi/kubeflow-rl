@@ -17,8 +17,10 @@ FROM tensorflow/tensorflow:1.3.0
 RUN pip install gym==0.9.4
 RUN pip install pybullet==1.7.5
 
+RUN apt-get update
+RUN apt-get install -y libav-tools ffmpeg
+
 ADD third_party/agents /app/agents/
+RUN cd /app/agents && pip install -e .
 
 WORKDIR /app
-
-RUN cd agents && pip install -e .

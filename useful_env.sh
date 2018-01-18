@@ -7,7 +7,6 @@ JUPYTER_INGRESS=${JUPYTER_SERVICE}
 
 # Name of component for IAP
 JUPYTER_IAP_INGRESS_NAME=jupyter-iap
-
 ENDPOINT=jupyterhub
 
 # Name of the ksonnet environment
@@ -17,3 +16,4 @@ ENV=gke
 CORE_NAME=kubeflow-core
 
 DOCS_PATH=~/git_kubeflow-rl/google_kubeflow/docs/gke/
+
