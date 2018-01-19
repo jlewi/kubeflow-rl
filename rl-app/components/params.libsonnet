@@ -55,5 +55,12 @@
       trainer_mode: "train_and_render",
       value_layers: "200,100",
     },
+    tensorboard: {
+      log_dir: "gs://kubeflow-rl-kf/jobs/pybullet-kuka-ff-0118-2346-bac2",
+      name: "pybullet-kuka-ff-0118-2346-bac2",
+      namespace: "rl",
+      secret: "kubeflow-rl-gcp",
+      secret_file_name: "secret.json",
+    },
   },
 }

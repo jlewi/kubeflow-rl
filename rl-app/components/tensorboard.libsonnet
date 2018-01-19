@@ -1,10 +1,10 @@
 {
 	parts(namespace, name,):: {
-		service = {
+		service:: {
 		  "apiVersion": "v1", 
 		  "kind": "Service", 
 		  "metadata": {
-		    "name": name,
+		    "name": name + "-tb",
 		    "namespace": namespace,
 		  }, 
 		  "spec": {
@@ -12,21 +12,21 @@
 		      {
 		        "name": "http", 
 		        "port": 80, 
-		        "targetPort": 80
+		        "targetPort": 80,
 		      }
 		    ], 
 		    "selector": {
-		      "app": "tensorboard"
+		      "app": "tensorboard",
 		      "tb-job": name,
 		    },
 		  },
 		},
 
-		tbDeployment(logDir, serviceAccount, secretFileName, tfImage="gcr.io/tensorflow/tensorflow:latest"):: {
+		tbDeployment(logDir, secretName, secretFileName, tfImage="gcr.io/tensorflow/tensorflow:latest"):: {
 		  "apiVersion": "apps/v1beta1", 
 		  "kind": "Deployment", 
 		  "metadata": {
-		    "name": name,
+		    "name": name + "-tb",
 		    "namespace": namespace,
 		  }, 
 		  "spec": {
@@ -34,7 +34,7 @@
 		    "template": {
 		      "metadata": {
 		        "labels": {
-		          "app": "tensorboard"
+		          "app": "tensorboard",
 		          "tb-job": name,
 		        }, 
 		        "name": name,
@@ -70,7 +70,7 @@
 		        "volumes": [{
 			            "name": "credentials",
 			            "secret": {
-			              "secretName": secret,
+			              "secretName": secretName,
 			            },
 			      }		       
 		        ],
