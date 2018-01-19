@@ -1,0 +1,98 @@
+---
+# Try to use ambassador as a proxy for TB
+apiVersion: v1
+kind: Service
+metadata:  
+  name: tb-envoy-proxy
+  namespace: rl
+  annotations:
+    getambassador.io/config: |
+      ---
+      apiVersion: ambassador/v0
+      kind:  Mapping
+      name:  tb_mapping
+      prefix: /tensorboard/
+      rewrite: /
+      service: tb-envoy-proxy.rl
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: tensorboard-test
+    tb-job: pybullet-kuka-ff-0118-2346-bac2
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: tensorboard-test
+    tb-job: pybullet-kuka-ff-0118-2346-bac2
+  name: tb-test
+  namespace: rl
+spec:  
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tensorboard-test
+      tb-job: pybullet-kuka-ff-0118-2346-bac2
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: tensorboard-test
+        tb-job: pybullet-kuka-ff-0118-2346-bac2
+      name: pybullet-kuka-ff-0118-2346-bac2
+      namespace: rl
+    spec:
+      containers:
+      - command:
+        - /usr/local/bin/tensorboard
+        - --logdir=gs://kubeflow-rl-kf/jobs/pybullet-kuka-ff-0118-2346-bac2
+        - --port=80
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /secret/gcp-credentials/secret.json
+        image: gcr.io/tensorflow/tensorflow:latest
+        imagePullPolicy: Always
+        name: tensorboard
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /secret/gcp-credentials
+          name: credentials
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 30
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: credentials
+        secret:
+          defaultMode: 420
+          secretName: kubeflow-rl-gcp
