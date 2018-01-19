@@ -1,0 +1,41 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/auth-signin: https://master.kubeflow-rl.io/oauth2/start
+    nginx.ingress.kubernetes.io/auth-url: https://master.kubeflow-rl.io/oauth2/auth
+    #kubernetes.io/ingress.global-static-ip-name: "kubeflow-master"
+  name: external-auth-oauth2
+  namespace: kube-system
+spec:
+  rules:
+  - host: "master.kubeflow-rl.io"
+    http:
+      paths:
+      - backend:
+          serviceName: kubernetes-dashboard
+          servicePort: 80
+        path: /
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: oauth2-proxy
+  namespace: kube-system
+  #annotations:
+  #  kubernetes.io/ingress.global-static-ip-name: "kubeflow-master"
+spec:
+  rules:
+  - host: "master.kubeflow-rl.io"
+    http:
+      paths:
+      - backend:
+          serviceName: oauth2-proxy
+          servicePort: 4180
+        path: /oauth2
+  tls:
+  - hosts:
+    - "master.kubeflow-rl.io"
+    secretName: oauth-provider-ssl
