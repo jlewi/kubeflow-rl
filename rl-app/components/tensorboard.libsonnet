@@ -5,7 +5,19 @@
 		  "kind": "Service", 
 		  "metadata": {
 		    "name": name + "-tb",
-		    "namespace": namespace,
+		    "namespace": namespace,		    
+		    "annotations": {
+		       // TODO(jlewi): What happen if we represent the annotation as an object and not serialized YAML?
+		       "getambassador.io/config":
+		       	  std.join("\n", [ 
+			      "---",
+			      "apiVersion: ambassador/v0",
+			      "kind:  Mapping",
+			      "name: " + name + "_mapping",
+			      "prefix: /tensorboard/" + name, 
+			      "rewrite: /",
+			      "service: " + name + "." + namespace]),
+			 }, //annotations
 		  }, 
 		  "spec": {
 		    "ports": [
