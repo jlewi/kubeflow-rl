@@ -3,7 +3,7 @@ local params = std.extVar("__ksonnet/params").components["kubeflow-core"];
 // because ksonnet doesn't support inheriting it from the environment yet.
 
 local k = import 'k.libsonnet';
-// local ambassador = import "kubeflow/core/ambassador.libsonnet";
+local ambassador = import "kubeflow/core/ambassador.libsonnet";
 local jupyter = import "kubeflow/core/jupyterhub.libsonnet";
 local tfjob = import "kubeflow/core/tf-job.libsonnet";
 local nfs = import "kubeflow/core/nfs.libsonnet";
@@ -81,11 +81,11 @@ std.prune(k.core.v1.list.new([
     tfjob.parts(namespace).uiService(tfJobUiServiceType),
 
     // Ambassador
-    //ambassador.parts(namespace).service,
-    //ambassador.parts(namespace).adminService,
-    //ambassador.parts(namespace).clusterRole,
-    //ambassador.parts(namespace).serviceAccount,    
-    //ambassador.parts(namespace).clusterRoleBinding,    
-    //ambassador.parts(namespace).deploy,
+    ambassador.parts(namespace).service,
+    ambassador.parts(namespace).adminService,
+    ambassador.parts(namespace).clusterRole,
+    ambassador.parts(namespace).serviceAccount,    
+    ambassador.parts(namespace).clusterRoleBinding,    
+    ambassador.parts(namespace).deploy,
 ] + nfsComponents))
 
