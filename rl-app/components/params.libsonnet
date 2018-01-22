@@ -62,5 +62,10 @@
       secret: "kubeflow-rl-gcp",
       secret_file_name: "secret.json",
     },
+    envoy: {
+      envoyImage: "gcr.io/kubeflow-rl/envoy:v20180122-0.4.0-45-g971c754-dirty-d82312",
+      name: "envoy",
+      namespace: "default",
+    },
   },
 }

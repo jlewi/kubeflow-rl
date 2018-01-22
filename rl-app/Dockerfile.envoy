@@ -1,0 +1,2 @@
+# Make a modified ambassador image with our envoy.
+FROM quay.io/datawire/ambassador:0.22.0

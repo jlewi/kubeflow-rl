@@ -1,0 +1,741 @@
+[2018-01-22 03:31:58.039][16][info][main] external/envoy/source/server/server.cc:185] initializing epoch 0 (hot restart version=9.200.16384.127)
+[2018-01-22 03:31:58.042][16][debug][main] external/envoy/source/server/server.cc:171] Unable to initialize config as v2, will retry as v1: Unable to parse JSON as proto (INVALID_ARGUMENT:: Cannot find field.): {
+  "listeners": [
+    {
+      "address": "tcp://0.0.0.0:80",
+      "filters": [
+        {
+          "type": "read",
+          "name": "http_connection_manager",
+          "config": {
+            "codec_type": "auto",
+            "stat_prefix": "ingress_http",
+            "access_log": [
+              {
+                "format": "ACCESS [%START_TIME%] \"%REQ(:METHOD)% %REQ(X-ENVOY-ORIGINAL-PATH?:PATH)% %PROTOCOL%\" %RESPONSE_CODE% %RESPONSE_FLAGS% %BYTES_RECEIVED% %BYTES_SENT% %DURATION% %RESP(X-ENVOY-UPSTREAM-SERVICE-TIME)% \"%REQ(X-FORWARDED-FOR)%\" \"%REQ(USER-AGENT)%\" \"%REQ(X-REQUEST-ID)%\" \"%REQ(:AUTHORITY)%\" \"%UPSTREAM_HOST%\"\n",
+                "path": "/dev/fd/1"
+              }
+            ],
+            "route_config": {
+              "virtual_hosts": [
+                {
+                  "name": "backend",
+                  "domains": ["*"],
+                  "routes": [
+                    
+                    {
+                      "timeout_ms": 10000,"prefix": "/ambassador/v0/check_ready","prefix_rewrite": "/ambassador/v0/check_ready",
+                      "weighted_clusters": {
+                          "clusters": [
+                              
+                                 { "name": "cluster_127_0_0_1_8877", "weight": 100.0 }
+                              
+                          ]
+                      }
+                      
+                    }
+                    ,
+                    
+                    {
+                      "timeout_ms": 10000,"prefix": "/ambassador/v0/check_alive","prefix_rewrite": "/ambassador/v0/check_alive",
+                      "weighted_clusters": {
+                          "clusters": [
+                              
+                                 { "name": "cluster_127_0_0_1_8877", "weight": 100.0 }
+                              
+                          ]
+                      }
+                      
+                    }
+                    ,
+                    
+                    {
+                      "timeout_ms": 10000,"prefix": "/ambassador/v0/","prefix_rewrite": "/ambassador/v0/",
+                      "weighted_clusters": {
+                          "clusters": [
+                              
+                                 { "name": "cluster_127_0_0_1_8877", "weight": 100.0 }
+                              
+                          ]
+                      }
+                      
+                    }
+                    
+                    
+                  ]
+                }
+              ]
+            },
+            "filters": [
+              {
+                "type": "decoder",
+                "name": "jwt-auth",
+                "config": {                  
+                  "issuers": [
+                    {
+                      "name": "https://cloud.google.com/iap",
+                      "audiences": [
+                        "/projects/991277910492/global/backendServices/31"
+                      ],
+                      "pubkey": {
+                        "type": "jwks",
+                        "uri": "https://www.gstatic.com/iap/verify/public_key-jwk",
+                        "cluster": "iap_issuer"
+                      }
+                    }
+                  ]
+                }
+              },
+              { 
+                "type": "decoder",
+                "name": "router",
+                "config": {}
+              }
+            ]
+          }
+        }
+      ]
+    }    
+  ],
+  "admin": {
+    "address": "tcp://127.0.0.1:8001",
+    "access_log_path": "/tmp/admin_access_log"
+  },
+  "cluster_manager": {
+    "clusters": [
+      {
+        "name": "https://cloud.google.com/iap",
+        "connect_timeout_ms": 5000,
+        "type": "strict_dns",
+        "circuit_breakers": {
+         "default": {
+          "max_pending_requests": 10000,
+          "max_requests": 10000
+         }
+        },
+        "lb_type": "round_robin",
+        "hosts": [
+          {
+            "url": "tcp://www.gstatic.com:80"
+          }
+        ]
+      },
+      {
+        "name": "cluster_127_0_0_1_8877",
+        "connect_timeout_ms": 3000,
+        "type": "strict_dns",
+        "lb_type": "round_robin",        
+        "hosts": [
+          {
+            "url": "tcp://127.0.0.1:8877"
+          }
+          
+        ]}
+      
+    ]
+  },
+  "statsd_udp_ip_address": "127.0.0.1:8125",
+  "stats_flush_interval_ms": 1000
+}
+[2018-01-22 03:31:58.052][16][debug][main] external/envoy/source/server/server.cc:214] admin address: 127.0.0.1:8001
+[2018-01-22 03:31:58.151][16][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:177] No ADS clusters defined, ADS will not be initialized.
+[2018-01-22 03:31:58.436][16][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:575] adding TLS initial cluster cluster_127_0_0_1_8877
+[2018-01-22 03:31:58.438][16][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:575] adding TLS initial cluster https://cloud.google.com/iap
+[2018-01-22 03:31:58.438][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:655] starting async DNS resolution for 127.0.0.1
+[2018-01-22 03:31:58.438][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:662] async DNS resolution complete for 127.0.0.1
+[2018-01-22 03:31:58.438][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:680] DNS hosts have changed for 127.0.0.1
+[2018-01-22 03:31:58.438][16][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:656] membership update for TLS cluster cluster_127_0_0_1_8877
+[2018-01-22 03:31:58.438][16][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:87] cm init: init complete: cluster=cluster_127_0_0_1_8877 primary=0 secondary=0
+[2018-01-22 03:31:58.438][16][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:59] cm init: adding: cluster=cluster_127_0_0_1_8877 primary=0 secondary=0
+[2018-01-22 03:31:58.438][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:655] starting async DNS resolution for www.gstatic.com
+[2018-01-22 03:31:58.438][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 5000 milliseconds
+[2018-01-22 03:31:58.438][16][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:59] cm init: adding: cluster=https://cloud.google.com/iap primary=1 secondary=0
+[2018-01-22 03:31:58.438][16][info][config] external/envoy/source/server/configuration_impl.cc:46] loading 1 listener(s)
+[2018-01-22 03:31:58.438][16][debug][config] external/envoy/source/server/configuration_impl.cc:48] listener #0:
+[2018-01-22 03:31:58.438][16][debug][config] external/envoy/source/server/listener_manager_impl.cc:219] begin add/update listener: name=cab3d8ae-1b23-4f7b-ae7f-0053c2aebbb8 hash=9880446730158691432
+[2018-01-22 03:31:58.439][16][debug][config] external/envoy/source/server/listener_manager_impl.cc:29]   filter #0:
+[2018-01-22 03:31:58.439][16][debug][config] external/envoy/source/server/listener_manager_impl.cc:30]     name: envoy.http_connection_manager
+[2018-01-22 03:31:58.439][16][debug][config] external/envoy/source/server/listener_manager_impl.cc:33]   config: {"deprecated_v1":true,"value":{"stat_prefix":"ingress_http","route_config":{"virtual_hosts":[{"routes":[{"prefix_rewrite":"/ambassador/v0/check_ready","prefix":"/ambassador/v0/check_ready","timeout_ms":10000,"weighted_clusters":{"clusters":[{"weight":100,"name":"cluster_127_0_0_1_8877"}]}},{"prefix_rewrite":"/ambassador/v0/check_alive","prefix":"/ambassador/v0/check_alive","weighted_clusters":{"clusters":[{"name":"cluster_127_0_0_1_8877","weight":100}]},"timeout_ms":10000},{"weighted_clusters":{"clusters":[{"name":"cluster_127_0_0_1_8877","weight":100}]},"timeout_ms":10000,"prefix_rewrite":"/ambassador/v0/","prefix":"/ambassador/v0/"}],"name":"backend","domains":["*"]}]},"access_log":[{"path":"/dev/fd/1","format":"ACCESS [%START_TIME%] \"%REQ(:METHOD)% %REQ(X-ENVOY-ORIGINAL-PATH?:PATH)% %PROTOCOL%\" %RESPONSE_CODE% %RESPONSE_FLAGS% %BYTES_RECEIVED% %BYTES_SENT% %DURATION% %RESP(X-ENVOY-UPSTREAM-SERVICE-TIME)% \"%REQ(X-FORWARDED-FOR)%\" \"%REQ(USER-AGENT)%\" \"%REQ(X-REQUEST-ID)%\" \"%REQ(:AUTHORITY)%\" \"%UPSTREAM_HOST%\"\n"}],"codec_type":"auto","filters":[{"config":{"issuers":[{"audiences":["/projects/991277910492/global/backendServices/31"],"name":"https://cloud.google.com/iap","pubkey":{"cluster":"iap_issuer","type":"jwks","uri":"https://www.gstatic.com/iap/verify/public_key-jwk"}}]},"name":"jwt-auth","type":"decoder"},{"config":{},"name":"router","type":"decoder"}]}}
+[2018-01-22 03:31:58.539][16][debug][config] external/envoy/source/server/config/network/http_connection_manager.cc:226]     filter #0
+[2018-01-22 03:31:58.539][16][debug][config] external/envoy/source/server/config/network/http_connection_manager.cc:227]       name: jwt-auth
+[2018-01-22 03:31:58.539][16][debug][config] external/envoy/source/server/config/network/http_connection_manager.cc:231]     config: {"deprecated_v1":true,"value":{"issuers":[{"audiences":["/projects/991277910492/global/backendServices/31"],"name":"https://cloud.google.com/iap","pubkey":{"cluster":"iap_issuer","type":"jwks","uri":"https://www.gstatic.com/iap/verify/public_key-jwk"}}]}}
+[2018-01-22 03:31:58.539][16][debug][http] src/envoy/auth/config.cc:184] JwtAuthConfig: JwtAuthConfig
+[2018-01-22 03:31:58.539][16][debug][http] src/envoy/auth/config.cc:94] IssuerInfo: IssuerInfo
+[2018-01-22 03:31:58.539][16][debug][config] external/envoy/source/server/config/network/http_connection_manager.cc:226]     filter #1
+[2018-01-22 03:31:58.539][16][debug][config] external/envoy/source/server/config/network/http_connection_manager.cc:227]       name: envoy.router
+[2018-01-22 03:31:58.539][16][debug][config] external/envoy/source/server/config/network/http_connection_manager.cc:231]     config: {"deprecated_v1":true,"value":{}}
+[2018-01-22 03:31:58.541][16][debug][config] external/envoy/source/server/listener_manager_impl.cc:165] add active listener: name=cab3d8ae-1b23-4f7b-ae7f-0053c2aebbb8, hash=9880446730158691432, address=0.0.0.0:80
+[2018-01-22 03:31:58.541][16][info][config] external/envoy/source/server/configuration_impl.cc:84] loading tracing configuration
+[2018-01-22 03:31:58.541][16][info][config] external/envoy/source/server/configuration_impl.cc:110] loading stats sink configuration
+[2018-01-22 03:31:58.542][16][debug][config] external/envoy/source/server/config/stats/statsd.cc:27] statsd UDP ip address: 127.0.0.1:8125
+[2018-01-22 03:31:58.542][16][info][main] external/envoy/source/server/server.cc:363] starting main dispatch loop
+[2018-01-22 03:31:58.543][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 4686 milliseconds
+[2018-01-22 03:31:58.543][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 3124 milliseconds
+[2018-01-22 03:31:58.543][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 3749 milliseconds
+[2018-01-22 03:31:58.544][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 3124 milliseconds
+[2018-01-22 03:31:58.545][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 5000 milliseconds
+[2018-01-22 03:31:58.545][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:662] async DNS resolution complete for www.gstatic.com
+[2018-01-22 03:31:58.545][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:680] DNS hosts have changed for www.gstatic.com
+[2018-01-22 03:31:58.545][16][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:656] membership update for TLS cluster https://cloud.google.com/iap
+[2018-01-22 03:31:58.545][16][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:87] cm init: init complete: cluster=https://cloud.google.com/iap primary=0 secondary=0
+[2018-01-22 03:31:58.545][16][info][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:131] cm init: all clusters initialized
+[2018-01-22 03:31:58.545][16][info][main] external/envoy/source/server/server.cc:347] all clusters initialized. initializing init manager
+[2018-01-22 03:31:58.545][16][info][config] external/envoy/source/server/listener_manager_impl.cc:488] all dependencies initialized. starting workers
+[2018-01-22 03:31:58.545][22][debug][main] external/envoy/source/server/worker_impl.cc:107] worker entering dispatch loop
+[2018-01-22 03:31:58.545][22][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:575] adding TLS initial cluster cluster_127_0_0_1_8877
+[2018-01-22 03:31:58.545][22][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:575] adding TLS initial cluster https://cloud.google.com/iap
+[2018-01-22 03:31:58.545][22][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:656] membership update for TLS cluster cluster_127_0_0_1_8877
+[2018-01-22 03:31:58.545][22][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:656] membership update for TLS cluster https://cloud.google.com/iap
+[2018-01-22 03:31:58.547][23][debug][main] external/envoy/source/server/worker_impl.cc:107] worker entering dispatch loop
+[2018-01-22 03:31:58.547][23][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:575] adding TLS initial cluster cluster_127_0_0_1_8877
+[2018-01-22 03:31:58.547][24][debug][main] external/envoy/source/server/worker_impl.cc:107] worker entering dispatch loop
+[2018-01-22 03:31:58.547][24][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:575] adding TLS initial cluster cluster_127_0_0_1_8877
+[2018-01-22 03:31:58.547][25][debug][main] external/envoy/source/server/worker_impl.cc:107] worker entering dispatch loop
+[2018-01-22 03:31:58.547][25][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:575] adding TLS initial cluster cluster_127_0_0_1_8877
+[2018-01-22 03:31:58.547][23][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:575] adding TLS initial cluster https://cloud.google.com/iap
+[2018-01-22 03:31:58.547][25][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:575] adding TLS initial cluster https://cloud.google.com/iap
+[2018-01-22 03:31:58.547][23][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:656] membership update for TLS cluster cluster_127_0_0_1_8877
+[2018-01-22 03:31:58.547][25][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:656] membership update for TLS cluster cluster_127_0_0_1_8877
+[2018-01-22 03:31:58.547][23][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:656] membership update for TLS cluster https://cloud.google.com/iap
+[2018-01-22 03:31:58.547][25][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:656] membership update for TLS cluster https://cloud.google.com/iap
+[2018-01-22 03:31:58.547][26][debug][main] external/envoy/source/server/worker_impl.cc:107] worker entering dispatch loop
+[2018-01-22 03:31:58.548][26][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:575] adding TLS initial cluster cluster_127_0_0_1_8877
+[2018-01-22 03:31:58.548][27][debug][main] external/envoy/source/server/worker_impl.cc:107] worker entering dispatch loop
+[2018-01-22 03:31:58.548][27][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:575] adding TLS initial cluster cluster_127_0_0_1_8877
+[2018-01-22 03:31:58.548][28][debug][main] external/envoy/source/server/worker_impl.cc:107] worker entering dispatch loop
+[2018-01-22 03:31:58.548][28][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:575] adding TLS initial cluster cluster_127_0_0_1_8877
+[2018-01-22 03:31:58.548][29][debug][main] external/envoy/source/server/worker_impl.cc:107] worker entering dispatch loop
+[2018-01-22 03:31:58.548][29][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:575] adding TLS initial cluster cluster_127_0_0_1_8877
+[2018-01-22 03:31:58.548][26][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:575] adding TLS initial cluster https://cloud.google.com/iap
+[2018-01-22 03:31:58.548][26][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:656] membership update for TLS cluster cluster_127_0_0_1_8877
+[2018-01-22 03:31:58.548][29][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:575] adding TLS initial cluster https://cloud.google.com/iap
+[2018-01-22 03:31:58.548][26][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:656] membership update for TLS cluster https://cloud.google.com/iap
+[2018-01-22 03:31:58.548][29][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:656] membership update for TLS cluster cluster_127_0_0_1_8877
+[2018-01-22 03:31:58.548][29][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:656] membership update for TLS cluster https://cloud.google.com/iap
+[2018-01-22 03:31:58.548][27][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:575] adding TLS initial cluster https://cloud.google.com/iap
+[2018-01-22 03:31:58.548][27][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:656] membership update for TLS cluster cluster_127_0_0_1_8877
+[2018-01-22 03:31:58.548][24][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:575] adding TLS initial cluster https://cloud.google.com/iap
+[2018-01-22 03:31:58.548][24][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:656] membership update for TLS cluster cluster_127_0_0_1_8877
+[2018-01-22 03:31:58.548][27][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:656] membership update for TLS cluster https://cloud.google.com/iap
+[2018-01-22 03:31:58.548][24][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:656] membership update for TLS cluster https://cloud.google.com/iap
+[2018-01-22 03:31:58.548][28][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:575] adding TLS initial cluster https://cloud.google.com/iap
+[2018-01-22 03:31:58.548][28][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:656] membership update for TLS cluster cluster_127_0_0_1_8877
+[2018-01-22 03:31:58.548][28][debug][upstream] external/envoy/source/common/upstream/cluster_manager_impl.cc:656] membership update for TLS cluster https://cloud.google.com/iap
+[2018-01-22 03:31:59.542][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:00.543][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:01.543][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:01.546][16][info][main] external/envoy/source/server/drain_manager_impl.cc:63] shutting down parent after drain
+[2018-01-22 03:32:02.542][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:03.437][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:655] starting async DNS resolution for 127.0.0.1
+[2018-01-22 03:32:03.437][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:662] async DNS resolution complete for 127.0.0.1
+[2018-01-22 03:32:03.542][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:03.545][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:655] starting async DNS resolution for www.gstatic.com
+[2018-01-22 03:32:03.545][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 3436 milliseconds
+[2018-01-22 03:32:03.546][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 4061 milliseconds
+[2018-01-22 03:32:03.546][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 3124 milliseconds
+[2018-01-22 03:32:03.547][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 4374 milliseconds
+[2018-01-22 03:32:03.551][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 3436 milliseconds
+[2018-01-22 03:32:03.554][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 3749 milliseconds
+[2018-01-22 03:32:03.554][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:662] async DNS resolution complete for www.gstatic.com
+[2018-01-22 03:32:04.542][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:05.064][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:129] [C1] new connection
+[2018-01-22 03:32:05.064][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:181] [C1] new stream
+[2018-01-22 03:32:05.065][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:439] [C1][S13965763345230583472] request headers complete (end_stream=true):
+[2018-01-22 03:32:05.065][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C1][S13965763345230583472]   ':authority':'127.0.0.1:8001'
+[2018-01-22 03:32:05.065][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C1][S13965763345230583472]   'user-agent':'python-requests/2.18.4'
+[2018-01-22 03:32:05.065][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C1][S13965763345230583472]   'accept-encoding':'gzip, deflate'
+[2018-01-22 03:32:05.065][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C1][S13965763345230583472]   'accept':'*/*'
+[2018-01-22 03:32:05.065][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C1][S13965763345230583472]   'connection':'keep-alive'
+[2018-01-22 03:32:05.065][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C1][S13965763345230583472]   ':path':'/logging'
+[2018-01-22 03:32:05.065][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C1][S13965763345230583472]   ':method':'GET'
+[2018-01-22 03:32:05.065][16][debug][admin] external/envoy/source/server/http/admin.cc:580] [C1][S13965763345230583472] request complete: path: /logging
+[2018-01-22 03:32:05.065][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:860] [C1][S13965763345230583472] encoding headers via codec (end_stream=false):
+[2018-01-22 03:32:05.065][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C1][S13965763345230583472]   ':status':'404'
+[2018-01-22 03:32:05.065][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C1][S13965763345230583472]   'content-type':'text/plain; charset=UTF-8'
+[2018-01-22 03:32:05.065][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C1][S13965763345230583472]   'cache-control':'no-cache, max-age=0'
+[2018-01-22 03:32:05.065][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C1][S13965763345230583472]   'x-content-type-options':'nosniff'
+[2018-01-22 03:32:05.065][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C1][S13965763345230583472]   'date':'Mon, 22 Jan 2018 03:32:05 GMT'
+[2018-01-22 03:32:05.065][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C1][S13965763345230583472]   'server':'envoy'
+[2018-01-22 03:32:05.066][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:433] [C1] remote close
+[2018-01-22 03:32:05.066][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:173] [C1] closing socket: 0
+[2018-01-22 03:32:05.066][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:59] [C1] adding to cleanup list
+[2018-01-22 03:32:05.067][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:129] [C2] new connection
+[2018-01-22 03:32:05.068][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:181] [C2] new stream
+[2018-01-22 03:32:05.068][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:439] [C2][S763353901386391152] request headers complete (end_stream=true):
+[2018-01-22 03:32:05.068][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C2][S763353901386391152]   ':authority':'127.0.0.1:8001'
+[2018-01-22 03:32:05.068][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C2][S763353901386391152]   'user-agent':'python-requests/2.18.4'
+[2018-01-22 03:32:05.068][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C2][S763353901386391152]   'accept-encoding':'gzip, deflate'
+[2018-01-22 03:32:05.068][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C2][S763353901386391152]   'accept':'*/*'
+[2018-01-22 03:32:05.068][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C2][S763353901386391152]   'connection':'keep-alive'
+[2018-01-22 03:32:05.068][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C2][S763353901386391152]   ':path':'/stats'
+[2018-01-22 03:32:05.068][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C2][S763353901386391152]   ':method':'GET'
+[2018-01-22 03:32:05.068][16][debug][admin] external/envoy/source/server/http/admin.cc:580] [C2][S763353901386391152] request complete: path: /stats
+[2018-01-22 03:32:05.069][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:860] [C2][S763353901386391152] encoding headers via codec (end_stream=false):
+[2018-01-22 03:32:05.069][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C2][S763353901386391152]   ':status':'200'
+[2018-01-22 03:32:05.069][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C2][S763353901386391152]   'content-type':'text/plain; charset=UTF-8'
+[2018-01-22 03:32:05.069][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C2][S763353901386391152]   'cache-control':'no-cache, max-age=0'
+[2018-01-22 03:32:05.069][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C2][S763353901386391152]   'x-content-type-options':'nosniff'
+[2018-01-22 03:32:05.069][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C2][S763353901386391152]   'date':'Mon, 22 Jan 2018 03:32:05 GMT'
+[2018-01-22 03:32:05.069][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C2][S763353901386391152]   'server':'envoy'
+[2018-01-22 03:32:05.070][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:433] [C2] remote close
+[2018-01-22 03:32:05.070][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:173] [C2] closing socket: 0
+[2018-01-22 03:32:05.070][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:59] [C2] adding to cleanup list
+[2018-01-22 03:32:05.543][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:06.543][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:07.544][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:08.437][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:655] starting async DNS resolution for 127.0.0.1
+[2018-01-22 03:32:08.438][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:662] async DNS resolution complete for 127.0.0.1
+[2018-01-22 03:32:08.614][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:08.615][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:655] starting async DNS resolution for www.gstatic.com
+[2018-01-22 03:32:08.616][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 3436 milliseconds
+[2018-01-22 03:32:08.616][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 3749 milliseconds
+[2018-01-22 03:32:08.616][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 3749 milliseconds
+[2018-01-22 03:32:08.617][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 4686 milliseconds
+[2018-01-22 03:32:08.620][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 4061 milliseconds
+[2018-01-22 03:32:08.623][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 3436 milliseconds
+[2018-01-22 03:32:08.624][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:662] async DNS resolution complete for www.gstatic.com
+[2018-01-22 03:32:09.615][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:10.130][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:129] [C3] new connection
+[2018-01-22 03:32:10.130][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:181] [C3] new stream
+[2018-01-22 03:32:10.130][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:439] [C3][S17825834948857318138] request headers complete (end_stream=true):
+[2018-01-22 03:32:10.130][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C3][S17825834948857318138]   ':authority':'127.0.0.1:8001'
+[2018-01-22 03:32:10.130][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C3][S17825834948857318138]   'user-agent':'python-requests/2.18.4'
+[2018-01-22 03:32:10.130][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C3][S17825834948857318138]   'accept-encoding':'gzip, deflate'
+[2018-01-22 03:32:10.130][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C3][S17825834948857318138]   'accept':'*/*'
+[2018-01-22 03:32:10.130][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C3][S17825834948857318138]   'connection':'keep-alive'
+[2018-01-22 03:32:10.130][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C3][S17825834948857318138]   ':path':'/logging'
+[2018-01-22 03:32:10.130][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C3][S17825834948857318138]   ':method':'GET'
+[2018-01-22 03:32:10.130][16][debug][admin] external/envoy/source/server/http/admin.cc:580] [C3][S17825834948857318138] request complete: path: /logging
+[2018-01-22 03:32:10.130][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:860] [C3][S17825834948857318138] encoding headers via codec (end_stream=false):
+[2018-01-22 03:32:10.130][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C3][S17825834948857318138]   ':status':'404'
+[2018-01-22 03:32:10.130][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C3][S17825834948857318138]   'content-type':'text/plain; charset=UTF-8'
+[2018-01-22 03:32:10.130][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C3][S17825834948857318138]   'cache-control':'no-cache, max-age=0'
+[2018-01-22 03:32:10.130][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C3][S17825834948857318138]   'x-content-type-options':'nosniff'
+[2018-01-22 03:32:10.130][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C3][S17825834948857318138]   'date':'Mon, 22 Jan 2018 03:32:10 GMT'
+[2018-01-22 03:32:10.130][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C3][S17825834948857318138]   'server':'envoy'
+[2018-01-22 03:32:10.131][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:433] [C3] remote close
+[2018-01-22 03:32:10.131][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:173] [C3] closing socket: 0
+[2018-01-22 03:32:10.131][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:59] [C3] adding to cleanup list
+[2018-01-22 03:32:10.133][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:129] [C4] new connection
+[2018-01-22 03:32:10.133][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:181] [C4] new stream
+[2018-01-22 03:32:10.133][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:439] [C4][S2225580318249552358] request headers complete (end_stream=true):
+[2018-01-22 03:32:10.133][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C4][S2225580318249552358]   ':authority':'127.0.0.1:8001'
+[2018-01-22 03:32:10.133][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C4][S2225580318249552358]   'user-agent':'python-requests/2.18.4'
+[2018-01-22 03:32:10.133][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C4][S2225580318249552358]   'accept-encoding':'gzip, deflate'
+[2018-01-22 03:32:10.133][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C4][S2225580318249552358]   'accept':'*/*'
+[2018-01-22 03:32:10.133][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C4][S2225580318249552358]   'connection':'keep-alive'
+[2018-01-22 03:32:10.133][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C4][S2225580318249552358]   ':path':'/stats'
+[2018-01-22 03:32:10.133][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C4][S2225580318249552358]   ':method':'GET'
+[2018-01-22 03:32:10.133][16][debug][admin] external/envoy/source/server/http/admin.cc:580] [C4][S2225580318249552358] request complete: path: /stats
+[2018-01-22 03:32:10.134][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:860] [C4][S2225580318249552358] encoding headers via codec (end_stream=false):
+[2018-01-22 03:32:10.134][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C4][S2225580318249552358]   ':status':'200'
+[2018-01-22 03:32:10.134][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C4][S2225580318249552358]   'content-type':'text/plain; charset=UTF-8'
+[2018-01-22 03:32:10.134][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C4][S2225580318249552358]   'cache-control':'no-cache, max-age=0'
+[2018-01-22 03:32:10.134][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C4][S2225580318249552358]   'x-content-type-options':'nosniff'
+[2018-01-22 03:32:10.134][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C4][S2225580318249552358]   'date':'Mon, 22 Jan 2018 03:32:10 GMT'
+[2018-01-22 03:32:10.134][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C4][S2225580318249552358]   'server':'envoy'
+[2018-01-22 03:32:10.223][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:433] [C4] remote close
+[2018-01-22 03:32:10.223][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:173] [C4] closing socket: 0
+[2018-01-22 03:32:10.223][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:59] [C4] adding to cleanup list
+[2018-01-22 03:32:10.616][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:11.617][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:12.617][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:13.437][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:655] starting async DNS resolution for 127.0.0.1
+[2018-01-22 03:32:13.437][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:662] async DNS resolution complete for 127.0.0.1
+[2018-01-22 03:32:13.621][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:13.628][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:655] starting async DNS resolution for www.gstatic.com
+[2018-01-22 03:32:13.628][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 4061 milliseconds
+[2018-01-22 03:32:13.628][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 2811 milliseconds
+[2018-01-22 03:32:13.629][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 3749 milliseconds
+[2018-01-22 03:32:13.629][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 2811 milliseconds
+[2018-01-22 03:32:13.633][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 5000 milliseconds
+[2018-01-22 03:32:13.636][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 4374 milliseconds
+[2018-01-22 03:32:13.637][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:662] async DNS resolution complete for www.gstatic.com
+[2018-01-22 03:32:14.620][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:15.231][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:129] [C5] new connection
+[2018-01-22 03:32:15.231][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:181] [C5] new stream
+[2018-01-22 03:32:15.231][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:439] [C5][S5010249985982458859] request headers complete (end_stream=true):
+[2018-01-22 03:32:15.231][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C5][S5010249985982458859]   ':authority':'127.0.0.1:8001'
+[2018-01-22 03:32:15.231][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C5][S5010249985982458859]   'user-agent':'python-requests/2.18.4'
+[2018-01-22 03:32:15.231][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C5][S5010249985982458859]   'accept-encoding':'gzip, deflate'
+[2018-01-22 03:32:15.231][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C5][S5010249985982458859]   'accept':'*/*'
+[2018-01-22 03:32:15.231][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C5][S5010249985982458859]   'connection':'keep-alive'
+[2018-01-22 03:32:15.231][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C5][S5010249985982458859]   ':path':'/logging'
+[2018-01-22 03:32:15.231][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C5][S5010249985982458859]   ':method':'GET'
+[2018-01-22 03:32:15.231][16][debug][admin] external/envoy/source/server/http/admin.cc:580] [C5][S5010249985982458859] request complete: path: /logging
+[2018-01-22 03:32:15.232][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:860] [C5][S5010249985982458859] encoding headers via codec (end_stream=false):
+[2018-01-22 03:32:15.232][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C5][S5010249985982458859]   ':status':'404'
+[2018-01-22 03:32:15.232][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C5][S5010249985982458859]   'content-type':'text/plain; charset=UTF-8'
+[2018-01-22 03:32:15.232][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C5][S5010249985982458859]   'cache-control':'no-cache, max-age=0'
+[2018-01-22 03:32:15.232][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C5][S5010249985982458859]   'x-content-type-options':'nosniff'
+[2018-01-22 03:32:15.232][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C5][S5010249985982458859]   'date':'Mon, 22 Jan 2018 03:32:15 GMT'
+[2018-01-22 03:32:15.232][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C5][S5010249985982458859]   'server':'envoy'
+[2018-01-22 03:32:15.234][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:433] [C5] remote close
+[2018-01-22 03:32:15.234][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:173] [C5] closing socket: 0
+[2018-01-22 03:32:15.234][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:59] [C5] adding to cleanup list
+[2018-01-22 03:32:15.234][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:129] [C6] new connection
+[2018-01-22 03:32:15.235][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:181] [C6] new stream
+[2018-01-22 03:32:15.235][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:439] [C6][S4310953164692716645] request headers complete (end_stream=true):
+[2018-01-22 03:32:15.235][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C6][S4310953164692716645]   ':authority':'127.0.0.1:8001'
+[2018-01-22 03:32:15.235][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C6][S4310953164692716645]   'user-agent':'python-requests/2.18.4'
+[2018-01-22 03:32:15.235][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C6][S4310953164692716645]   'accept-encoding':'gzip, deflate'
+[2018-01-22 03:32:15.235][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C6][S4310953164692716645]   'accept':'*/*'
+[2018-01-22 03:32:15.235][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C6][S4310953164692716645]   'connection':'keep-alive'
+[2018-01-22 03:32:15.235][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C6][S4310953164692716645]   ':path':'/stats'
+[2018-01-22 03:32:15.235][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C6][S4310953164692716645]   ':method':'GET'
+[2018-01-22 03:32:15.235][16][debug][admin] external/envoy/source/server/http/admin.cc:580] [C6][S4310953164692716645] request complete: path: /stats
+[2018-01-22 03:32:15.236][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:860] [C6][S4310953164692716645] encoding headers via codec (end_stream=false):
+[2018-01-22 03:32:15.236][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C6][S4310953164692716645]   ':status':'200'
+[2018-01-22 03:32:15.236][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C6][S4310953164692716645]   'content-type':'text/plain; charset=UTF-8'
+[2018-01-22 03:32:15.236][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C6][S4310953164692716645]   'cache-control':'no-cache, max-age=0'
+[2018-01-22 03:32:15.236][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C6][S4310953164692716645]   'x-content-type-options':'nosniff'
+[2018-01-22 03:32:15.236][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C6][S4310953164692716645]   'date':'Mon, 22 Jan 2018 03:32:15 GMT'
+[2018-01-22 03:32:15.236][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C6][S4310953164692716645]   'server':'envoy'
+[2018-01-22 03:32:15.237][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:433] [C6] remote close
+[2018-01-22 03:32:15.237][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:173] [C6] closing socket: 0
+[2018-01-22 03:32:15.237][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:59] [C6] adding to cleanup list
+[2018-01-22 03:32:15.620][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:16.620][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:17.620][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:18.437][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:655] starting async DNS resolution for 127.0.0.1
+[2018-01-22 03:32:18.437][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:662] async DNS resolution complete for 127.0.0.1
+[2018-01-22 03:32:18.621][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:18.637][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:655] starting async DNS resolution for www.gstatic.com
+[2018-01-22 03:32:18.637][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 4686 milliseconds
+[2018-01-22 03:32:18.638][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 3436 milliseconds
+[2018-01-22 03:32:18.638][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 4686 milliseconds
+[2018-01-22 03:32:18.639][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 3749 milliseconds
+[2018-01-22 03:32:18.643][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 3749 milliseconds
+[2018-01-22 03:32:18.646][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 5000 milliseconds
+[2018-01-22 03:32:18.646][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:662] async DNS resolution complete for www.gstatic.com
+[2018-01-22 03:32:19.621][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:20.245][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:129] [C7] new connection
+[2018-01-22 03:32:20.246][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:181] [C7] new stream
+[2018-01-22 03:32:20.246][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:439] [C7][S115946612768032676] request headers complete (end_stream=true):
+[2018-01-22 03:32:20.246][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C7][S115946612768032676]   ':authority':'127.0.0.1:8001'
+[2018-01-22 03:32:20.246][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C7][S115946612768032676]   'user-agent':'python-requests/2.18.4'
+[2018-01-22 03:32:20.246][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C7][S115946612768032676]   'accept-encoding':'gzip, deflate'
+[2018-01-22 03:32:20.246][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C7][S115946612768032676]   'accept':'*/*'
+[2018-01-22 03:32:20.246][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C7][S115946612768032676]   'connection':'keep-alive'
+[2018-01-22 03:32:20.246][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C7][S115946612768032676]   ':path':'/logging'
+[2018-01-22 03:32:20.246][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C7][S115946612768032676]   ':method':'GET'
+[2018-01-22 03:32:20.246][16][debug][admin] external/envoy/source/server/http/admin.cc:580] [C7][S115946612768032676] request complete: path: /logging
+[2018-01-22 03:32:20.246][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:860] [C7][S115946612768032676] encoding headers via codec (end_stream=false):
+[2018-01-22 03:32:20.246][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C7][S115946612768032676]   ':status':'404'
+[2018-01-22 03:32:20.246][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C7][S115946612768032676]   'content-type':'text/plain; charset=UTF-8'
+[2018-01-22 03:32:20.246][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C7][S115946612768032676]   'cache-control':'no-cache, max-age=0'
+[2018-01-22 03:32:20.246][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C7][S115946612768032676]   'x-content-type-options':'nosniff'
+[2018-01-22 03:32:20.246][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C7][S115946612768032676]   'date':'Mon, 22 Jan 2018 03:32:20 GMT'
+[2018-01-22 03:32:20.246][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C7][S115946612768032676]   'server':'envoy'
+[2018-01-22 03:32:20.247][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:433] [C7] remote close
+[2018-01-22 03:32:20.247][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:173] [C7] closing socket: 0
+[2018-01-22 03:32:20.247][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:59] [C7] adding to cleanup list
+[2018-01-22 03:32:20.249][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:129] [C8] new connection
+[2018-01-22 03:32:20.249][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:181] [C8] new stream
+[2018-01-22 03:32:20.249][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:439] [C8][S1318780775086393393] request headers complete (end_stream=true):
+[2018-01-22 03:32:20.249][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C8][S1318780775086393393]   ':authority':'127.0.0.1:8001'
+[2018-01-22 03:32:20.249][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C8][S1318780775086393393]   'user-agent':'python-requests/2.18.4'
+[2018-01-22 03:32:20.249][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C8][S1318780775086393393]   'accept-encoding':'gzip, deflate'
+[2018-01-22 03:32:20.249][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C8][S1318780775086393393]   'accept':'*/*'
+[2018-01-22 03:32:20.249][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C8][S1318780775086393393]   'connection':'keep-alive'
+[2018-01-22 03:32:20.249][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C8][S1318780775086393393]   ':path':'/stats'
+[2018-01-22 03:32:20.249][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C8][S1318780775086393393]   ':method':'GET'
+[2018-01-22 03:32:20.249][16][debug][admin] external/envoy/source/server/http/admin.cc:580] [C8][S1318780775086393393] request complete: path: /stats
+[2018-01-22 03:32:20.250][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:860] [C8][S1318780775086393393] encoding headers via codec (end_stream=false):
+[2018-01-22 03:32:20.250][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C8][S1318780775086393393]   ':status':'200'
+[2018-01-22 03:32:20.250][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C8][S1318780775086393393]   'content-type':'text/plain; charset=UTF-8'
+[2018-01-22 03:32:20.321][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C8][S1318780775086393393]   'cache-control':'no-cache, max-age=0'
+[2018-01-22 03:32:20.321][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C8][S1318780775086393393]   'x-content-type-options':'nosniff'
+[2018-01-22 03:32:20.321][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C8][S1318780775086393393]   'date':'Mon, 22 Jan 2018 03:32:20 GMT'
+[2018-01-22 03:32:20.321][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C8][S1318780775086393393]   'server':'envoy'
+[2018-01-22 03:32:20.324][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:433] [C8] remote close
+[2018-01-22 03:32:20.324][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:173] [C8] closing socket: 0
+[2018-01-22 03:32:20.324][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:59] [C8] adding to cleanup list
+[2018-01-22 03:32:20.622][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:21.622][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:22.623][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:23.438][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:655] starting async DNS resolution for 127.0.0.1
+[2018-01-22 03:32:23.438][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:662] async DNS resolution complete for 127.0.0.1
+[2018-01-22 03:32:23.623][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:23.646][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:655] starting async DNS resolution for www.gstatic.com
+[2018-01-22 03:32:23.646][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 3124 milliseconds
+[2018-01-22 03:32:23.647][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 3436 milliseconds
+[2018-01-22 03:32:23.648][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 4686 milliseconds
+[2018-01-22 03:32:23.649][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 3436 milliseconds
+[2018-01-22 03:32:23.653][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 4374 milliseconds
+[2018-01-22 03:32:23.656][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 5000 milliseconds
+[2018-01-22 03:32:23.657][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:662] async DNS resolution complete for www.gstatic.com
+[2018-01-22 03:32:24.625][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:25.331][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:129] [C9] new connection
+[2018-01-22 03:32:25.331][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:181] [C9] new stream
+[2018-01-22 03:32:25.331][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:439] [C9][S14206464434733233071] request headers complete (end_stream=true):
+[2018-01-22 03:32:25.331][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C9][S14206464434733233071]   ':authority':'127.0.0.1:8001'
+[2018-01-22 03:32:25.331][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C9][S14206464434733233071]   'user-agent':'python-requests/2.18.4'
+[2018-01-22 03:32:25.331][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C9][S14206464434733233071]   'accept-encoding':'gzip, deflate'
+[2018-01-22 03:32:25.331][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C9][S14206464434733233071]   'accept':'*/*'
+[2018-01-22 03:32:25.331][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C9][S14206464434733233071]   'connection':'keep-alive'
+[2018-01-22 03:32:25.331][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C9][S14206464434733233071]   ':path':'/logging'
+[2018-01-22 03:32:25.331][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C9][S14206464434733233071]   ':method':'GET'
+[2018-01-22 03:32:25.331][16][debug][admin] external/envoy/source/server/http/admin.cc:580] [C9][S14206464434733233071] request complete: path: /logging
+[2018-01-22 03:32:25.332][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:860] [C9][S14206464434733233071] encoding headers via codec (end_stream=false):
+[2018-01-22 03:32:25.332][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C9][S14206464434733233071]   ':status':'404'
+[2018-01-22 03:32:25.332][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C9][S14206464434733233071]   'content-type':'text/plain; charset=UTF-8'
+[2018-01-22 03:32:25.332][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C9][S14206464434733233071]   'cache-control':'no-cache, max-age=0'
+[2018-01-22 03:32:25.332][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C9][S14206464434733233071]   'x-content-type-options':'nosniff'
+[2018-01-22 03:32:25.332][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C9][S14206464434733233071]   'date':'Mon, 22 Jan 2018 03:32:25 GMT'
+[2018-01-22 03:32:25.332][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C9][S14206464434733233071]   'server':'envoy'
+[2018-01-22 03:32:25.333][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:433] [C9] remote close
+[2018-01-22 03:32:25.333][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:173] [C9] closing socket: 0
+[2018-01-22 03:32:25.333][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:59] [C9] adding to cleanup list
+[2018-01-22 03:32:25.334][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:129] [C10] new connection
+[2018-01-22 03:32:25.335][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:181] [C10] new stream
+[2018-01-22 03:32:25.335][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:439] [C10][S8913522335818303739] request headers complete (end_stream=true):
+[2018-01-22 03:32:25.335][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C10][S8913522335818303739]   ':authority':'127.0.0.1:8001'
+[2018-01-22 03:32:25.335][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C10][S8913522335818303739]   'user-agent':'python-requests/2.18.4'
+[2018-01-22 03:32:25.335][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C10][S8913522335818303739]   'accept-encoding':'gzip, deflate'
+[2018-01-22 03:32:25.335][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C10][S8913522335818303739]   'accept':'*/*'
+[2018-01-22 03:32:25.335][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C10][S8913522335818303739]   'connection':'keep-alive'
+[2018-01-22 03:32:25.335][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C10][S8913522335818303739]   ':path':'/stats'
+[2018-01-22 03:32:25.335][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C10][S8913522335818303739]   ':method':'GET'
+[2018-01-22 03:32:25.335][16][debug][admin] external/envoy/source/server/http/admin.cc:580] [C10][S8913522335818303739] request complete: path: /stats
+[2018-01-22 03:32:25.336][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:860] [C10][S8913522335818303739] encoding headers via codec (end_stream=false):
+[2018-01-22 03:32:25.336][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C10][S8913522335818303739]   ':status':'200'
+[2018-01-22 03:32:25.336][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C10][S8913522335818303739]   'content-type':'text/plain; charset=UTF-8'
+[2018-01-22 03:32:25.336][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C10][S8913522335818303739]   'cache-control':'no-cache, max-age=0'
+[2018-01-22 03:32:25.336][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C10][S8913522335818303739]   'x-content-type-options':'nosniff'
+[2018-01-22 03:32:25.336][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C10][S8913522335818303739]   'date':'Mon, 22 Jan 2018 03:32:25 GMT'
+[2018-01-22 03:32:25.336][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C10][S8913522335818303739]   'server':'envoy'
+[2018-01-22 03:32:25.423][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:433] [C10] remote close
+[2018-01-22 03:32:25.423][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:173] [C10] closing socket: 0
+[2018-01-22 03:32:25.423][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:59] [C10] adding to cleanup list
+[2018-01-22 03:32:25.624][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:26.624][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:27.625][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:28.439][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:655] starting async DNS resolution for 127.0.0.1
+[2018-01-22 03:32:28.439][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:662] async DNS resolution complete for 127.0.0.1
+[2018-01-22 03:32:28.625][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:28.656][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:655] starting async DNS resolution for www.gstatic.com
+[2018-01-22 03:32:28.657][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 3124 milliseconds
+[2018-01-22 03:32:28.657][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 2811 milliseconds
+[2018-01-22 03:32:28.657][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 3749 milliseconds
+[2018-01-22 03:32:28.657][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 3436 milliseconds
+[2018-01-22 03:32:28.661][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 4374 milliseconds
+[2018-01-22 03:32:28.665][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 4374 milliseconds
+[2018-01-22 03:32:28.665][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:662] async DNS resolution complete for www.gstatic.com
+[2018-01-22 03:32:29.627][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:30.431][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:129] [C11] new connection
+[2018-01-22 03:32:30.431][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:181] [C11] new stream
+[2018-01-22 03:32:30.432][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:439] [C11][S15390624004574481842] request headers complete (end_stream=true):
+[2018-01-22 03:32:30.432][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C11][S15390624004574481842]   ':authority':'127.0.0.1:8001'
+[2018-01-22 03:32:30.432][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C11][S15390624004574481842]   'user-agent':'python-requests/2.18.4'
+[2018-01-22 03:32:30.432][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C11][S15390624004574481842]   'accept-encoding':'gzip, deflate'
+[2018-01-22 03:32:30.432][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C11][S15390624004574481842]   'accept':'*/*'
+[2018-01-22 03:32:30.432][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C11][S15390624004574481842]   'connection':'keep-alive'
+[2018-01-22 03:32:30.432][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C11][S15390624004574481842]   ':path':'/logging'
+[2018-01-22 03:32:30.432][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C11][S15390624004574481842]   ':method':'GET'
+[2018-01-22 03:32:30.432][16][debug][admin] external/envoy/source/server/http/admin.cc:580] [C11][S15390624004574481842] request complete: path: /logging
+[2018-01-22 03:32:30.432][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:860] [C11][S15390624004574481842] encoding headers via codec (end_stream=false):
+[2018-01-22 03:32:30.432][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C11][S15390624004574481842]   ':status':'404'
+[2018-01-22 03:32:30.432][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C11][S15390624004574481842]   'content-type':'text/plain; charset=UTF-8'
+[2018-01-22 03:32:30.432][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C11][S15390624004574481842]   'cache-control':'no-cache, max-age=0'
+[2018-01-22 03:32:30.432][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C11][S15390624004574481842]   'x-content-type-options':'nosniff'
+[2018-01-22 03:32:30.432][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C11][S15390624004574481842]   'date':'Mon, 22 Jan 2018 03:32:30 GMT'
+[2018-01-22 03:32:30.432][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C11][S15390624004574481842]   'server':'envoy'
+[2018-01-22 03:32:30.433][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:433] [C11] remote close
+[2018-01-22 03:32:30.433][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:173] [C11] closing socket: 0
+[2018-01-22 03:32:30.433][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:59] [C11] adding to cleanup list
+[2018-01-22 03:32:30.434][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:129] [C12] new connection
+[2018-01-22 03:32:30.435][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:181] [C12] new stream
+[2018-01-22 03:32:30.435][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:439] [C12][S7167648877498642762] request headers complete (end_stream=true):
+[2018-01-22 03:32:30.435][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C12][S7167648877498642762]   ':authority':'127.0.0.1:8001'
+[2018-01-22 03:32:30.435][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C12][S7167648877498642762]   'user-agent':'python-requests/2.18.4'
+[2018-01-22 03:32:30.435][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C12][S7167648877498642762]   'accept-encoding':'gzip, deflate'
+[2018-01-22 03:32:30.435][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C12][S7167648877498642762]   'accept':'*/*'
+[2018-01-22 03:32:30.435][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C12][S7167648877498642762]   'connection':'keep-alive'
+[2018-01-22 03:32:30.435][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C12][S7167648877498642762]   ':path':'/stats'
+[2018-01-22 03:32:30.435][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C12][S7167648877498642762]   ':method':'GET'
+[2018-01-22 03:32:30.435][16][debug][admin] external/envoy/source/server/http/admin.cc:580] [C12][S7167648877498642762] request complete: path: /stats
+[2018-01-22 03:32:30.436][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:860] [C12][S7167648877498642762] encoding headers via codec (end_stream=false):
+[2018-01-22 03:32:30.436][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C12][S7167648877498642762]   ':status':'200'
+[2018-01-22 03:32:30.436][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C12][S7167648877498642762]   'content-type':'text/plain; charset=UTF-8'
+[2018-01-22 03:32:30.436][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C12][S7167648877498642762]   'cache-control':'no-cache, max-age=0'
+[2018-01-22 03:32:30.436][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C12][S7167648877498642762]   'x-content-type-options':'nosniff'
+[2018-01-22 03:32:30.436][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C12][S7167648877498642762]   'date':'Mon, 22 Jan 2018 03:32:30 GMT'
+[2018-01-22 03:32:30.436][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C12][S7167648877498642762]   'server':'envoy'
+[2018-01-22 03:32:30.438][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:433] [C12] remote close
+[2018-01-22 03:32:30.438][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:173] [C12] closing socket: 0
+[2018-01-22 03:32:30.438][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:59] [C12] adding to cleanup list
+[2018-01-22 03:32:30.627][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:31.627][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:32.627][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:33.439][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:655] starting async DNS resolution for 127.0.0.1
+[2018-01-22 03:32:33.439][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:662] async DNS resolution complete for 127.0.0.1
+[2018-01-22 03:32:33.627][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:33.666][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:655] starting async DNS resolution for www.gstatic.com
+[2018-01-22 03:32:33.666][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 4374 milliseconds
+[2018-01-22 03:32:33.666][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 5000 milliseconds
+[2018-01-22 03:32:33.667][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 2811 milliseconds
+[2018-01-22 03:32:33.667][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 3124 milliseconds
+[2018-01-22 03:32:33.670][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 4686 milliseconds
+[2018-01-22 03:32:33.673][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 4061 milliseconds
+[2018-01-22 03:32:33.674][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:662] async DNS resolution complete for www.gstatic.com
+[2018-01-22 03:32:34.628][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:35.528][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:129] [C13] new connection
+[2018-01-22 03:32:35.529][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:181] [C13] new stream
+[2018-01-22 03:32:35.529][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:439] [C13][S7936047537340190388] request headers complete (end_stream=true):
+[2018-01-22 03:32:35.529][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C13][S7936047537340190388]   ':authority':'127.0.0.1:8001'
+[2018-01-22 03:32:35.529][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C13][S7936047537340190388]   'user-agent':'python-requests/2.18.4'
+[2018-01-22 03:32:35.529][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C13][S7936047537340190388]   'accept-encoding':'gzip, deflate'
+[2018-01-22 03:32:35.529][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C13][S7936047537340190388]   'accept':'*/*'
+[2018-01-22 03:32:35.529][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C13][S7936047537340190388]   'connection':'keep-alive'
+[2018-01-22 03:32:35.529][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C13][S7936047537340190388]   ':path':'/logging'
+[2018-01-22 03:32:35.529][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C13][S7936047537340190388]   ':method':'GET'
+[2018-01-22 03:32:35.529][16][debug][admin] external/envoy/source/server/http/admin.cc:580] [C13][S7936047537340190388] request complete: path: /logging
+[2018-01-22 03:32:35.529][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:860] [C13][S7936047537340190388] encoding headers via codec (end_stream=false):
+[2018-01-22 03:32:35.529][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C13][S7936047537340190388]   ':status':'404'
+[2018-01-22 03:32:35.529][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C13][S7936047537340190388]   'content-type':'text/plain; charset=UTF-8'
+[2018-01-22 03:32:35.529][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C13][S7936047537340190388]   'cache-control':'no-cache, max-age=0'
+[2018-01-22 03:32:35.529][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C13][S7936047537340190388]   'x-content-type-options':'nosniff'
+[2018-01-22 03:32:35.529][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C13][S7936047537340190388]   'date':'Mon, 22 Jan 2018 03:32:35 GMT'
+[2018-01-22 03:32:35.529][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C13][S7936047537340190388]   'server':'envoy'
+[2018-01-22 03:32:35.533][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:433] [C13] remote close
+[2018-01-22 03:32:35.533][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:173] [C13] closing socket: 0
+[2018-01-22 03:32:35.533][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:59] [C13] adding to cleanup list
+[2018-01-22 03:32:35.534][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:129] [C14] new connection
+[2018-01-22 03:32:35.534][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:181] [C14] new stream
+[2018-01-22 03:32:35.534][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:439] [C14][S6950077710197871161] request headers complete (end_stream=true):
+[2018-01-22 03:32:35.534][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C14][S6950077710197871161]   ':authority':'127.0.0.1:8001'
+[2018-01-22 03:32:35.534][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C14][S6950077710197871161]   'user-agent':'python-requests/2.18.4'
+[2018-01-22 03:32:35.534][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C14][S6950077710197871161]   'accept-encoding':'gzip, deflate'
+[2018-01-22 03:32:35.534][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C14][S6950077710197871161]   'accept':'*/*'
+[2018-01-22 03:32:35.534][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C14][S6950077710197871161]   'connection':'keep-alive'
+[2018-01-22 03:32:35.534][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C14][S6950077710197871161]   ':path':'/stats'
+[2018-01-22 03:32:35.534][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C14][S6950077710197871161]   ':method':'GET'
+[2018-01-22 03:32:35.534][16][debug][admin] external/envoy/source/server/http/admin.cc:580] [C14][S6950077710197871161] request complete: path: /stats
+[2018-01-22 03:32:35.535][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:860] [C14][S6950077710197871161] encoding headers via codec (end_stream=false):
+[2018-01-22 03:32:35.535][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C14][S6950077710197871161]   ':status':'200'
+[2018-01-22 03:32:35.535][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C14][S6950077710197871161]   'content-type':'text/plain; charset=UTF-8'
+[2018-01-22 03:32:35.535][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C14][S6950077710197871161]   'cache-control':'no-cache, max-age=0'
+[2018-01-22 03:32:35.535][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C14][S6950077710197871161]   'x-content-type-options':'nosniff'
+[2018-01-22 03:32:35.535][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C14][S6950077710197871161]   'date':'Mon, 22 Jan 2018 03:32:35 GMT'
+[2018-01-22 03:32:35.535][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C14][S6950077710197871161]   'server':'envoy'
+[2018-01-22 03:32:35.536][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:433] [C14] remote close
+[2018-01-22 03:32:35.536][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:173] [C14] closing socket: 0
+[2018-01-22 03:32:35.536][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:59] [C14] adding to cleanup list
+[2018-01-22 03:32:35.629][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:36.630][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:37.631][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:38.438][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:655] starting async DNS resolution for 127.0.0.1
+[2018-01-22 03:32:38.438][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:662] async DNS resolution complete for 127.0.0.1
+[2018-01-22 03:32:38.631][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:38.673][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:655] starting async DNS resolution for www.gstatic.com
+[2018-01-22 03:32:38.674][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 3749 milliseconds
+[2018-01-22 03:32:38.674][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 3436 milliseconds
+[2018-01-22 03:32:38.675][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 4374 milliseconds
+[2018-01-22 03:32:38.675][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 4686 milliseconds
+[2018-01-22 03:32:38.680][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 3749 milliseconds
+[2018-01-22 03:32:38.683][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 4061 milliseconds
+[2018-01-22 03:32:38.684][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:662] async DNS resolution complete for www.gstatic.com
+[2018-01-22 03:32:39.631][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:40.545][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:129] [C15] new connection
+[2018-01-22 03:32:40.545][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:181] [C15] new stream
+[2018-01-22 03:32:40.545][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:439] [C15][S1038430117525518683] request headers complete (end_stream=true):
+[2018-01-22 03:32:40.545][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C15][S1038430117525518683]   ':authority':'127.0.0.1:8001'
+[2018-01-22 03:32:40.545][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C15][S1038430117525518683]   'user-agent':'python-requests/2.18.4'
+[2018-01-22 03:32:40.545][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C15][S1038430117525518683]   'accept-encoding':'gzip, deflate'
+[2018-01-22 03:32:40.545][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C15][S1038430117525518683]   'accept':'*/*'
+[2018-01-22 03:32:40.545][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C15][S1038430117525518683]   'connection':'keep-alive'
+[2018-01-22 03:32:40.545][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C15][S1038430117525518683]   ':path':'/logging'
+[2018-01-22 03:32:40.545][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C15][S1038430117525518683]   ':method':'GET'
+[2018-01-22 03:32:40.545][16][debug][admin] external/envoy/source/server/http/admin.cc:580] [C15][S1038430117525518683] request complete: path: /logging
+[2018-01-22 03:32:40.545][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:860] [C15][S1038430117525518683] encoding headers via codec (end_stream=false):
+[2018-01-22 03:32:40.545][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C15][S1038430117525518683]   ':status':'404'
+[2018-01-22 03:32:40.545][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C15][S1038430117525518683]   'content-type':'text/plain; charset=UTF-8'
+[2018-01-22 03:32:40.545][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C15][S1038430117525518683]   'cache-control':'no-cache, max-age=0'
+[2018-01-22 03:32:40.545][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C15][S1038430117525518683]   'x-content-type-options':'nosniff'
+[2018-01-22 03:32:40.545][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C15][S1038430117525518683]   'date':'Mon, 22 Jan 2018 03:32:40 GMT'
+[2018-01-22 03:32:40.545][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C15][S1038430117525518683]   'server':'envoy'
+[2018-01-22 03:32:40.546][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:433] [C15] remote close
+[2018-01-22 03:32:40.546][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:173] [C15] closing socket: 0
+[2018-01-22 03:32:40.546][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:59] [C15] adding to cleanup list
+[2018-01-22 03:32:40.549][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:129] [C16] new connection
+[2018-01-22 03:32:40.549][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:181] [C16] new stream
+[2018-01-22 03:32:40.549][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:439] [C16][S836111457234329789] request headers complete (end_stream=true):
+[2018-01-22 03:32:40.549][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C16][S836111457234329789]   ':authority':'127.0.0.1:8001'
+[2018-01-22 03:32:40.549][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C16][S836111457234329789]   'user-agent':'python-requests/2.18.4'
+[2018-01-22 03:32:40.549][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C16][S836111457234329789]   'accept-encoding':'gzip, deflate'
+[2018-01-22 03:32:40.549][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C16][S836111457234329789]   'accept':'*/*'
+[2018-01-22 03:32:40.549][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C16][S836111457234329789]   'connection':'keep-alive'
+[2018-01-22 03:32:40.549][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C16][S836111457234329789]   ':path':'/stats'
+[2018-01-22 03:32:40.549][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C16][S836111457234329789]   ':method':'GET'
+[2018-01-22 03:32:40.549][16][debug][admin] external/envoy/source/server/http/admin.cc:580] [C16][S836111457234329789] request complete: path: /stats
+[2018-01-22 03:32:40.550][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:860] [C16][S836111457234329789] encoding headers via codec (end_stream=false):
+[2018-01-22 03:32:40.550][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C16][S836111457234329789]   ':status':'200'
+[2018-01-22 03:32:40.550][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C16][S836111457234329789]   'content-type':'text/plain; charset=UTF-8'
+[2018-01-22 03:32:40.550][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C16][S836111457234329789]   'cache-control':'no-cache, max-age=0'
+[2018-01-22 03:32:40.550][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C16][S836111457234329789]   'x-content-type-options':'nosniff'
+[2018-01-22 03:32:40.550][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C16][S836111457234329789]   'date':'Mon, 22 Jan 2018 03:32:40 GMT'
+[2018-01-22 03:32:40.550][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C16][S836111457234329789]   'server':'envoy'
+[2018-01-22 03:32:40.552][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:433] [C16] remote close
+[2018-01-22 03:32:40.552][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:173] [C16] closing socket: 0
+[2018-01-22 03:32:40.552][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:59] [C16] adding to cleanup list
+[2018-01-22 03:32:40.632][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:41.631][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:42.632][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:43.440][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:655] starting async DNS resolution for 127.0.0.1
+[2018-01-22 03:32:43.440][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:662] async DNS resolution complete for 127.0.0.1
+[2018-01-22 03:32:43.632][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:43.685][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:655] starting async DNS resolution for www.gstatic.com
+[2018-01-22 03:32:43.685][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 4061 milliseconds
+[2018-01-22 03:32:43.686][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 3124 milliseconds
+[2018-01-22 03:32:43.686][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 4686 milliseconds
+[2018-01-22 03:32:43.687][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 3436 milliseconds
+[2018-01-22 03:32:43.687][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 4061 milliseconds
+[2018-01-22 03:32:43.687][16][debug][upstream] external/envoy/source/common/network/dns_impl.cc:129] Setting DNS resolution timer for 3124 milliseconds
+[2018-01-22 03:32:43.687][16][debug][upstream] external/envoy/source/common/upstream/upstream_impl.cc:662] async DNS resolution complete for www.gstatic.com
+[2018-01-22 03:32:44.632][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:45.560][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:129] [C17] new connection
+[2018-01-22 03:32:45.560][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:181] [C17] new stream
+[2018-01-22 03:32:45.560][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:439] [C17][S14321853556857319708] request headers complete (end_stream=true):
+[2018-01-22 03:32:45.560][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C17][S14321853556857319708]   ':authority':'127.0.0.1:8001'
+[2018-01-22 03:32:45.560][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C17][S14321853556857319708]   'user-agent':'python-requests/2.18.4'
+[2018-01-22 03:32:45.560][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C17][S14321853556857319708]   'accept-encoding':'gzip, deflate'
+[2018-01-22 03:32:45.560][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C17][S14321853556857319708]   'accept':'*/*'
+[2018-01-22 03:32:45.560][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C17][S14321853556857319708]   'connection':'keep-alive'
+[2018-01-22 03:32:45.560][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C17][S14321853556857319708]   ':path':'/logging'
+[2018-01-22 03:32:45.560][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C17][S14321853556857319708]   ':method':'GET'
+[2018-01-22 03:32:45.561][16][debug][admin] external/envoy/source/server/http/admin.cc:580] [C17][S14321853556857319708] request complete: path: /logging
+[2018-01-22 03:32:45.561][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:860] [C17][S14321853556857319708] encoding headers via codec (end_stream=false):
+[2018-01-22 03:32:45.561][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C17][S14321853556857319708]   ':status':'404'
+[2018-01-22 03:32:45.561][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C17][S14321853556857319708]   'content-type':'text/plain; charset=UTF-8'
+[2018-01-22 03:32:45.561][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C17][S14321853556857319708]   'cache-control':'no-cache, max-age=0'
+[2018-01-22 03:32:45.561][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C17][S14321853556857319708]   'x-content-type-options':'nosniff'
+[2018-01-22 03:32:45.561][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C17][S14321853556857319708]   'date':'Mon, 22 Jan 2018 03:32:45 GMT'
+[2018-01-22 03:32:45.561][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C17][S14321853556857319708]   'server':'envoy'
+[2018-01-22 03:32:45.562][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:433] [C17] remote close
+[2018-01-22 03:32:45.562][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:173] [C17] closing socket: 0
+[2018-01-22 03:32:45.562][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:59] [C17] adding to cleanup list
+[2018-01-22 03:32:45.564][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:129] [C18] new connection
+[2018-01-22 03:32:45.564][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:181] [C18] new stream
+[2018-01-22 03:32:45.564][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:439] [C18][S1119328025141816917] request headers complete (end_stream=true):
+[2018-01-22 03:32:45.564][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C18][S1119328025141816917]   ':authority':'127.0.0.1:8001'
+[2018-01-22 03:32:45.564][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C18][S1119328025141816917]   'user-agent':'python-requests/2.18.4'
+[2018-01-22 03:32:45.564][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C18][S1119328025141816917]   'accept-encoding':'gzip, deflate'
+[2018-01-22 03:32:45.564][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C18][S1119328025141816917]   'accept':'*/*'
+[2018-01-22 03:32:45.564][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C18][S1119328025141816917]   'connection':'keep-alive'
+[2018-01-22 03:32:45.564][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C18][S1119328025141816917]   ':path':'/stats'
+[2018-01-22 03:32:45.564][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:444] [C18][S1119328025141816917]   ':method':'GET'
+[2018-01-22 03:32:45.564][16][debug][admin] external/envoy/source/server/http/admin.cc:580] [C18][S1119328025141816917] request complete: path: /stats
+[2018-01-22 03:32:45.565][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:860] [C18][S1119328025141816917] encoding headers via codec (end_stream=false):
+[2018-01-22 03:32:45.565][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C18][S1119328025141816917]   ':status':'200'
+[2018-01-22 03:32:45.565][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C18][S1119328025141816917]   'content-type':'text/plain; charset=UTF-8'
+[2018-01-22 03:32:45.565][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C18][S1119328025141816917]   'cache-control':'no-cache, max-age=0'
+[2018-01-22 03:32:45.565][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C18][S1119328025141816917]   'x-content-type-options':'nosniff'
+[2018-01-22 03:32:45.565][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C18][S1119328025141816917]   'date':'Mon, 22 Jan 2018 03:32:45 GMT'
+[2018-01-22 03:32:45.565][16][debug][http] external/envoy/source/common/http/conn_manager_impl.cc:865] [C18][S1119328025141816917]   'server':'envoy'
+[2018-01-22 03:32:45.566][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:433] [C18] remote close
+[2018-01-22 03:32:45.566][16][debug][connection] external/envoy/source/common/network/connection_impl.cc:173] [C18] closing socket: 0
+[2018-01-22 03:32:45.566][16][debug][main] external/envoy/source/server/connection_handler_impl.cc:59] [C18] adding to cleanup list
+[2018-01-22 03:32:45.631][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:46.632][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats
+[2018-01-22 03:32:47.632][16][debug][main] external/envoy/source/server/server.cc:137] flushing stats

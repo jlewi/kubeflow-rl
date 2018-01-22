@@ -9,7 +9,10 @@ params + {
     "kubeflow-core" +: {
       namespace: "iap-test",
     },
-    "jupyter-iap" +: {
+    envoy +: {
+      namespace: "iap-test",
+    },
+    tensorboard +: {
       namespace: "iap-test",
     },
   },

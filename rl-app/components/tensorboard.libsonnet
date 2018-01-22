@@ -1,10 +1,11 @@
 {
 	parts(namespace, name,):: {
 		service:: {
+		  local serviceName = name + "-tb",
 		  "apiVersion": "v1", 
 		  "kind": "Service", 
 		  "metadata": {
-		    "name": name + "-tb",
+		    "name": serviceName,
 		    "namespace": namespace,		    
 		    "annotations": {
 		       // TODO(jlewi): What happen if we represent the annotation as an object and not serialized YAML?
@@ -16,7 +17,7 @@
 			      "name: " + name + "_mapping",
 			      "prefix: /tensorboard/" + name, 
 			      "rewrite: /",
-			      "service: " + name + "." + namespace]),
+			      "service: " + serviceName + "." + namespace]),
 			 }, //annotations
 		  }, 
 		  "spec": {
