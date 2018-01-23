@@ -8,11 +8,4 @@ local envoy = import "kubeflow/core/envoy.libsonnet";
 local name = params.name;
 local namespace = params.namespace;
 
-local envoyImage = params.envoyImage;
-
-
-std.prune(k.core.v1.list.new([	
-    envoy.parts(namespace).service,
-    envoy.parts(namespace).deploy(envoyImage),
-    envoy.parts(namespace).configMap,
-]))
+envoy.parts(namespace).all(params.envoyImage, params.secretName, params.ipName)

@@ -63,9 +63,11 @@
       secret_file_name: "secret.json",
     },
     envoy: {
-      envoyImage: "gcr.io/kubeflow-rl/envoy:v20180122-0.4.0-45-g971c754-dirty-d82312",
+      envoyImage: "gcr.io/kubeflow-rl/envoy:v20180122-0.4.0-46-g52f0dae-dirty-9a9093",
+      ipName: "kubeflow",
       name: "envoy",
-      namespace: "default",
+      namespace: "iap-test",
+      secretName: "kubeflow-ssl-cert",
     },
   },
 }
