@@ -63,7 +63,7 @@ local nfsComponents =
 local kubeSpawner = jupyter.parts(namespace).kubeSpawner(jupyterHubAuthenticator, diskNames);
 std.prune(k.core.v1.list.new([
 	// jupyterHub components
-	// jupyter.parts(namespace).jupyterHubConfigMap(kubeSpawner),
+	jupyter.parts(namespace).jupyterHubConfigMap(kubeSpawner),
     jupyter.parts(namespace).jupyterHubService, 
     jupyter.parts(namespace).jupyterHubLoadBalancer(jupyterHubServiceType), 
     jupyter.parts(namespace).jupyterHub(jupyterHubImage, jupyterHubSideCars),

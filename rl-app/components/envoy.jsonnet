@@ -7,5 +7,5 @@ local envoy = import "kubeflow/core/envoy.libsonnet";
 
 local name = params.name;
 local namespace = params.namespace;
-
-envoy.parts(namespace).all(params.envoyImage, params.secretName, params.ipName)
+local audiences = std.split(params.audiences, ',');
+envoy.parts(namespace).all(params.envoyImage, params.secretName, params.ipName, audiences)
