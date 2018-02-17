@@ -14,9 +14,9 @@
 			      "apiVersion: ambassador/v0",
 			      "kind:  Mapping",
 			      "name: " + name + "_mapping",
-			      "prefix: /tensorboard/" + name, 
+			      "prefix: /tensorboard/" + name + "/", 
 			      "rewrite: /",
-			      "service: " + name + "." + namespace]),
+			      "service: " + name + "-tb." + namespace]),
 			 }, //annotations
 		  }, 
 		  "spec": {
@@ -77,6 +77,14 @@
 			        "name": "credentials",
 			        "mountPath": "/secret/gcp-credentials",
 			        }],
+                    // "livenessProbe": {
+                    //    "httpGet": {
+                    //      "path": "/", 
+                    //      "port": 80
+                    //    }, 
+                    //    "initialDelaySeconds": 15, 
+                    //    "periodSeconds": 3
+                    //  }
 		          }
 		        ],
 		        "volumes": [{
