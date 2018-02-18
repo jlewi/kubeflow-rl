@@ -3,9 +3,15 @@ kind: ksonnet.io/app
 libraries:
   core:
     gitVersion:
-      commitSha: d95c55461263bccf34ceb5b256a192316e9d7bb0
-      refSpec: d95c554
+      commitSha: 0cc054047fc3590d49a517d90ea93594c44d3a0f
+      refSpec: master
     name: core
+    registry: kubeflow
+  tf-job:
+    gitVersion:
+      commitSha: 0cc054047fc3590d49a517d90ea93594c44d3a0f
+      refSpec: master
+    name: tf-job
     registry: kubeflow
 name: rl-app
 registries:
@@ -17,8 +23,8 @@ registries:
     uri: github.com/ksonnet/parts/tree/master/incubator
   kubeflow:
     gitVersion:
-      commitSha: d95c55461263bccf34ceb5b256a192316e9d7bb0
-      refSpec: azure_config
+      commitSha: 0cc054047fc3590d49a517d90ea93594c44d3a0f
+      refSpec: master
     protocol: github
-    uri: github.com/jlewi/kubeflow/tree/azure_config/kubeflow
+    uri: github.com/kubeflow/kubeflow/tree/master/kubeflow
 version: 0.0.1
